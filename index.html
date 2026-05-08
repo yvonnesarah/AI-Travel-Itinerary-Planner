@@ -11,6 +11,9 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
   />
+
+  <!-- PDF EXPORT -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
@@ -86,20 +89,9 @@
         </div>
 
         <div class="form-group checkbox-group">
-          <label>
-            <input type="checkbox" id="includeHotel" checked>
-            Include Hotel Suggestions
-          </label>
-
-          <label>
-            <input type="checkbox" id="includeFood" checked>
-            Include Food Recommendations
-          </label>
-
-          <label>
-            <input type="checkbox" id="includeTransport" checked>
-            Include Transport Tips
-          </label>
+          <label><input type="checkbox" id="includeHotel" checked> Include Hotel Suggestions</label>
+          <label><input type="checkbox" id="includeFood" checked> Include Food Recommendations</label>
+          <label><input type="checkbox" id="includeTransport" checked> Include Transport Tips</label>
         </div>
 
         <div class="form-group">
@@ -115,7 +107,7 @@
 
           <button class="btn secondary-btn" onclick="downloadPlan()">
             <i class="fa-solid fa-download"></i>
-            Download Plan
+            Download PDF
           </button>
         </div>
 
@@ -140,6 +132,7 @@
             <p>Your AI itinerary will appear here.</p>
           </div>
         </div>
+
       </div>
 
     </div>
