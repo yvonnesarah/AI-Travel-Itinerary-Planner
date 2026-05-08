@@ -32,6 +32,18 @@
         Build personalized travel experiences with weather-aware plans,
         hotel suggestions, packing lists, budgets, and activity timelines.
       </p>
+
+      <button class="btn secondary-btn" onclick="toggleTheme()">
+  🌙 Toggle Theme
+</button>
+
+<button class="btn secondary-btn" onclick="saveTrip()">
+  💾 Save Trip
+</button>
+
+<button class="btn secondary-btn" onclick="exportJSON()">
+  📄 Export JSON
+</button>
     </div>
 
     <div class="planner-card">
@@ -94,10 +106,24 @@
           <label><input type="checkbox" id="includeTransport" checked> Include Transport Tips</label>
         </div>
 
-        <div class="form-group">
-          <label>Special Preferences</label>
-          <textarea id="preferences" placeholder="Museums, beaches, hiking, local food..."></textarea>
-        </div>
+       <div class="form-group">
+  <label for="preferences">
+    Special Preferences
+    <span style="font-weight:400; color:#64748b; font-size:13px;">
+      (Optional — help us personalise your trip)
+    </span>
+  </label>
+
+  <textarea 
+    id="preferences" 
+    placeholder="e.g. museums, hidden beaches, hiking trails, local cuisine, nightlife, photography spots..."
+    rows="4"
+  ></textarea>
+
+  <small style="color:#94a3b8; font-size:12px; margin-top:6px; display:block;">
+    Tip: Include interests, dietary needs, travel pace, or experiences you want to avoid.
+  </small>
+</div>
 
         <div class="button-group">
           <button class="btn primary-btn" onclick="generateItinerary()">
