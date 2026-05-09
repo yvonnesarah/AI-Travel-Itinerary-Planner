@@ -342,28 +342,84 @@ if (!data.main) {
   throw new Error("Invalid weather response");
 }
 
-    document.getElementById("weatherBox").innerHTML = `
+   document.getElementById("weatherBox").innerHTML = `
 
-      <div class="day-card">
+  <div class="day-card">
 
-        <h3>🌍 Current Weather in ${data.name}</h3>
+    <h3>🌍 Weather in ${data.name}</h3>
 
-        <div class="activity">🌡 Temp: ${data.main.temp}°C</div>
-        <div class="activity">🤔 Feels: ${data.main.feels_like}°C</div>
-        <div class="activity">☁️ ${data.weather[0].description}</div>
-        <div class="activity">💧 Humidity: ${data.main.humidity}%</div>
-        <div class="activity">🌬 Wind: ${data.wind.speed} m/s</div>
-        <div class="activity">🔵 Pressure: ${data.main.pressure} hPa</div>
-        <div class="activity">👀 Visibility: ${data.visibility / 1000} km</div>
+    <div class="activity">🌡 Temperature: ${data.main.temp}°C (Feels like ${data.main.feels_like}°C)</div>
 
-      </div>
+    <div class="activity">📉 Min: ${data.main.temp_min}°C | 📈 Max: ${data.main.temp_max}°C</div>
 
-    `;
+    <div class="activity">☁️ Condition: ${data.weather[0].description}</div>
+
+    <div class="activity">💧 Humidity: ${data.main.humidity}%</div>
+
+    <div class="activity">🌬 Wind: ${data.wind.speed} m/s (${getWindDirection(data.wind.deg)})</div>
+
+    <div class="activity">🔵 Pressure: ${data.main.pressure} hPa</div>
+
+    <div class="activity">👀 Visibility: ${(data.visibility / 1000).toFixed(1)} km</div>
+
+    <div class="activity">🌅 Sunrise: ${formatTime(data.sys.sunrise)}</div>
+
+    <div class="activity">🌇 Sunset: ${formatTime(data.sys.sunset)}</div>
+
+    <div class="activity">🌧 Rain chance: ${data.rain?.["1h"] ? data.rain["1h"] + " mm (last hour)" : "No rain detected"}</div>
+
+    <div class="activity">💡 Travel Tip: ${getSmartWeatherAdvice(data)}</div>
+
+  </div>
+
+`;
 
 } catch (err) {
   console.error(err);
   showToast("Weather unavailable ❌", "error");
   }
+}
+
+function formatTime(unix) {
+  const date = new Date(unix * 1000);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function getWindDirection(deg) {
+  const directions = [
+    "N", "NE", "E", "SE",
+    "S", "SW", "W", "NW"
+  ];
+
+  return directions[Math.round(deg / 45) % 8];
+}
+
+function getSmartWeatherAdvice(data) {
+
+  const temp = data.main.temp;
+  const weather = data.weather[0].main.toLowerCase();
+
+  if (weather.includes("rain")) {
+    return "Rain expected ☔ → indoor attractions & museum visits recommended";
+  }
+
+  if (temp > 30) {
+    return "Very hot 🔥 → stay hydrated, plan indoor midday breaks";
+  }
+
+  if (temp < 5) {
+    return "Very cold ❄️ → warm clothing required, limit outdoor exposure";
+  }
+
+  if (weather.includes("cloud")) {
+    return "Mild cloudy weather ☁️ → perfect for sightseeing walks";
+  }
+
+  if (weather.includes("clear")) {
+    return "Clear skies ☀️ → best time for outdoor activities & photography";
+  }
+
+  return "Good travel conditions 👍 enjoy your day!";
 }
 
 /* =========================
@@ -537,6 +593,43 @@ fetchWeather(destination);
   }
 
   showToast("Trip generated ✨");
+}
+
+function saveTrip() {
+
+  if (!currentPlan.length) {
+    showToast("No trip to save ❌", "error");
+    return;
+  }
+
+  const tripData = {
+    createdAt: new Date().toISOString(),
+    plan: currentPlan
+  };
+
+  let savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
+
+  savedTrips.push(tripData);
+
+  localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
+
+  showToast("Trip saved 💾");
+}
+
+function loadLastTrip() {
+
+  let savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
+
+  if (!savedTrips.length) {
+    showToast("No saved trips found ❌", "error");
+    return;
+  }
+
+  currentPlan = savedTrips[savedTrips.length - 1].plan;
+
+  renderSavedPlan();
+
+  showToast("Last trip loaded 📂");
 }
 
 /* =========================
