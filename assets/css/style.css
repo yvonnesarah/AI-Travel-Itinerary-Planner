@@ -295,32 +295,6 @@ body.dark .activity{
 }
 
 /* =========================
-   EXPENSE TRACKER
-========================= */
-
-#expenseTracker{
-  background:white;
-  border-radius:18px;
-  padding:20px;
-  margin-top:20px;
-}
-
-body.dark #expenseTracker{
-  background:#111827;
-}
-
-.expense-item{
-  background:#eef2ff;
-  padding:12px;
-  border-radius:12px;
-  margin-top:10px;
-}
-
-body.dark .expense-item{
-  background:#1e293b;
-}
-
-/* =========================
    FAVOURITES
 ========================= */
 
@@ -391,4 +365,18 @@ body.dark .favorite-trip-meta{
 
 .toast.info{
   background:#1976d2;
+}
+
+.packing-list {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.packing-list li {
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.toast.success {
+  background: #16a34a;
 }
