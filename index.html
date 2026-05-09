@@ -6,164 +6,89 @@
   <title>AI Travel Itinerary Planner</title>
 
   <link rel="stylesheet" href="assets/css/style.css">
-
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-  />
-
-  <!-- PDF EXPORT -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <div class="hero">
-      <div class="hero-badge">
-        <i class="fa-solid fa-location-dot"></i>
-        Smart AI Travel Assistant
-      </div>
-
-      <h1>AI Travel Itinerary Planner</h1>
-
-      <p>
-        Build personalized travel experiences with weather-aware plans,
-        hotel suggestions, packing lists, budgets, and activity timelines.
-      </p>
-
-      <button class="btn secondary-btn" onclick="toggleTheme()">
-  🌙 Toggle Theme
-</button>
-
-<button class="btn secondary-btn" onclick="saveTrip()">
-  💾 Save Trip
-</button>
-
-<button class="btn secondary-btn" onclick="exportJSON()">
-  📄 Export JSON
-</button>
+  <div class="hero">
+    <div class="hero-badge">
+      <i class="fa-solid fa-location-dot"></i>
+      Smart AI Travel Assistant
     </div>
 
-    <div class="planner-card">
+    <h1>AI Travel Itinerary Planner</h1>
 
-      <!-- FORM -->
-      <div class="form-section">
+    <p>Build smart travel plans with AI-style itineraries, hotels, food, and maps.</p>
 
-        <div class="section-title">
-          <i class="fa-solid fa-sliders"></i>
-          <span>Trip Details</span>
-        </div>
-
-        <div class="form-group">
-          <label>Destination</label>
-          <input type="text" id="destination" placeholder="e.g. Paris">
-        </div>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <label>Start Date</label>
-            <input type="date" id="startDate">
-          </div>
-
-          <div class="form-group">
-            <label>Number of Days</label>
-            <input type="number" id="days" min="1" max="14" placeholder="e.g. 5">
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="form-group">
-            <label>Budget</label>
-            <select id="budget">
-              <option>Budget</option>
-              <option>Mid-Range</option>
-              <option>Luxury</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Travel Style</label>
-            <select id="style">
-              <option>Adventure</option>
-              <option>Relaxation</option>
-              <option>Cultural</option>
-              <option>Romantic</option>
-              <option>Food & Nightlife</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Travelers</label>
-          <input type="number" id="travelers" min="1" max="20" value="2">
-        </div>
-
-        <div class="form-group checkbox-group">
-          <label><input type="checkbox" id="includeHotel" checked> Include Hotel Suggestions</label>
-          <label><input type="checkbox" id="includeFood" checked> Include Food Recommendations</label>
-          <label><input type="checkbox" id="includeTransport" checked> Include Transport Tips</label>
-        </div>
-
-       <div class="form-group">
-  <label for="preferences">
-    Special Preferences
-    <span style="font-weight:400; color:#64748b; font-size:13px;">
-      (Optional — help us personalise your trip)
-    </span>
-  </label>
-
-  <textarea 
-    id="preferences" 
-    placeholder="e.g. museums, hidden beaches, hiking trails, local cuisine, nightlife, photography spots..."
-    rows="4"
-  ></textarea>
-
-  <small style="color:#94a3b8; font-size:12px; margin-top:6px; display:block;">
-    Tip: Include interests, dietary needs, travel pace, or experiences you want to avoid.
-  </small>
-</div>
-
-        <div class="button-group">
-          <button class="btn primary-btn" onclick="generateItinerary()">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            Generate AI Itinerary
-          </button>
-
-          <button class="btn secondary-btn" onclick="downloadPlan()">
-            <i class="fa-solid fa-download"></i>
-            Download PDF
-          </button>
-        </div>
-
-      </div>
-
-      <!-- RESULT -->
-      <div class="result-section">
-
-        <div class="result-header">
-          <h2>Your Travel Plan</h2>
-
-          <button class="clear-btn" onclick="clearPlan()">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </div>
-
-        <div id="tripSummary"></div>
-
-        <div id="itinerary">
-          <div class="empty-state">
-            <i class="fa-solid fa-earth-americas"></i>
-            <p>Your AI itinerary will appear here.</p>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
+    <button class="btn secondary-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
+    <button class="btn secondary-btn" onclick="saveTrip()">💾 Save Trip</button>
+    <button class="btn secondary-btn" onclick="exportJSON()">📄 Export JSON</button>
   </div>
 
-  <script src="assets/js/script.js"></script>
+  <div class="planner-card">
+
+    <!-- FORM -->
+    <div class="form-section">
+
+      <input type="text" id="destination" placeholder="Destination">
+
+      <div class="grid-2">
+        <input type="date" id="startDate">
+        <input type="number" id="days" placeholder="Days">
+      </div>
+
+      <div class="grid-2">
+        <select id="budget">
+          <option>Budget</option>
+          <option>Mid-Range</option>
+          <option>Luxury</option>
+        </select>
+
+        <select id="style">
+          <option>Adventure</option>
+          <option>Relaxation</option>
+          <option>Cultural</option>
+          <option>Romantic</option>
+          <option>Food & Nightlife</option>
+        </select>
+      </div>
+
+      <input type="number" id="travelers" value="2">
+
+      <textarea id="preferences" rows="4" placeholder="Preferences..."></textarea>
+
+      <button class="btn primary-btn" onclick="generateItinerary()">
+        ✨ Generate Itinerary
+      </button>
+
+      <button class="btn secondary-btn" onclick="downloadPlan()">
+        ⬇ Download PDF
+      </button>
+
+    </div>
+
+    <!-- RESULT -->
+    <div class="result-section">
+
+      <div class="result-header">
+        <h2>Your Travel Plan</h2>
+      </div>
+
+      <div id="tripSummary"></div>
+      <div id="itinerary"></div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="assets/js/script.js"></script>
 </body>
 </html>

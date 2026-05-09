@@ -319,3 +319,25 @@ body.dark .empty-state {
   border-radius: 12px;
   cursor: pointer;
 }
+
+/* =========================
+   TOAST
+========================= */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #111827;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.3s;
+  z-index: 999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}

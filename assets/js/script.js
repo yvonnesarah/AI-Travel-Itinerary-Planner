@@ -1,29 +1,66 @@
 let currentPlan = [];
 
+// =========================
+// INIT
+// =========================
+document.addEventListener("DOMContentLoaded", () => {
+
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+  }
+
+  const saved = localStorage.getItem("travelPlan");
+  if (saved) {
+    currentPlan = JSON.parse(saved);
+    renderSavedPlan();
+  }
+});
+
+// =========================
+// TOAST
+// =========================
+function showToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.classList.add("show");
+
+  setTimeout(() => toast.classList.remove("show"), 2500);
+}
+
+// =========================
+// THEME
+// =========================
+function toggleTheme() {
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("dark") ? "dark" : "light"
+  );
+}
+
+// =========================
+// GENERATE ITINERARY
+// =========================
 function generateItinerary() {
 
   const destination = document.getElementById("destination").value;
   const days = parseInt(document.getElementById("days").value);
   const budget = document.getElementById("budget").value;
   const style = document.getElementById("style").value;
-  const travelers = document.getElementById("travelers").value;
   const startDate = document.getElementById("startDate").value;
-
-  const preferences = document.getElementById("preferences").value.toLowerCase();
 
   const itineraryContainer = document.getElementById("itinerary");
   const tripSummary = document.getElementById("tripSummary");
 
   if (!destination || !days) {
-    alert("Enter destination and days");
+    showToast("Enter destination & days");
     return;
   }
 
-  // =========================
-  // ACTIVITIES 
-  // =========================
-  const activities = {
+  itineraryContainer.innerHTML = "⏳ Generating...";
 
+  const activities = {
   Adventure: [
     "Mountain Hiking Trail",
     "Sunrise Summit Climb",
@@ -38,7 +75,13 @@ function generateItinerary() {
     "Bungee Jump Experience",
     "Kayaking River Tour",
     "ATV Quad Biking",
-    "Cave Exploration Tour"
+    "Cave Exploration Tour",
+    "Glacier Trekking",
+    "Skydiving Experience",
+    "Jungle Night Safari",
+    "Volcano Hiking Tour",
+    "Sandboarding Dunes",
+    "Ice Climbing Adventure"
   ],
 
   Relaxation: [
@@ -53,7 +96,12 @@ function generateItinerary() {
     "Private Resort Chill Day",
     "Scenic Garden Walk",
     "Thermal Spa Experience",
-    "Beachside Reading Day"
+    "Beachside Reading Day",
+    "Oceanfront Hammock Rest",
+    "Sauna & Steam Therapy",
+    "Forest Sound Healing Session",
+    "Wellness Detox Retreat",
+    "Sunset Beach Meditation"
   ],
 
   Cultural: [
@@ -68,7 +116,12 @@ function generateItinerary() {
     "Folk Music Performance",
     "Archaeological Site Visit",
     "Religious Landmark Tour",
-    "Street Art Discovery Walk"
+    "Street Art Discovery Walk",
+    "Local Market Exploration",
+    "Historical Monument Tour",
+    "UNESCO Heritage Site Visit",
+    "Traditional Craft Workshop",
+    "Cultural Village Experience"
   ],
 
   Romantic: [
@@ -83,7 +136,11 @@ function generateItinerary() {
     "Helicopter Scenic Tour",
     "Private Picnic Experience",
     "Lake Side Dinner Setup",
-    "Hot Air Balloon Ride"
+    "Hot Air Balloon Ride",
+    "Moonlit River Walk",
+    "Luxury Couple Massage",
+    "Private Island Escape Day",
+    "Sunset Cliff View Dinner"
   ],
 
   "Food & Nightlife": [
@@ -100,134 +157,177 @@ function generateItinerary() {
     "Night Club Experience",
     "Karaoke Night Out",
     "Sushi Making Workshop",
-    "Hidden Local Food Spots Tour"
+    "Hidden Local Food Spots Tour",
+    "Authentic Street BBQ Crawl",
+    "Cocktail Mixology Class",
+    "Seafood Night Feast Tour",
+    "Late Night Diner Run"
   ]
 };
 
-  const hotels = {
-    Budget: ["Budget Inn", "City Hostel"],
-    "Mid-Range": ["Grand Hotel", "City Suites"],
-    Luxury: ["Royal Palace", "Elite Resort"]
-  };
+const airports = {
+  default: [
+    "International Airport Arrival Terminal",
+    "City Airport Transfer Hub",
+    "Main International Airport",
+    "Regional Airport Terminal"
+  ]
+};
 
-  const foods = ["Local Food Tour", "Cafe Visit", "Fine Dining"];
-  const transport = ["Use Metro", "Book Taxi", "Walk Friendly Areas"];
+const hotels = {
+  Budget: [
+    "City Hostel",
+    "Backpacker Lodge",
+    "Budget Inn",
+    "Urban Capsule Hotel",
+    "EasyStay Hostel",
+    "Nomad Pod Stay",
+    "Smart Sleep Inn",
+    "Downtown Budget Rooms",
+    "Cozy Backpackers Hub",
+    "Metro Hostel Central"
+  ],
+
+  "Mid-Range": [
+    "City Plaza Hotel",
+    "Comfort Suites",
+    "Grand Horizon Hotel",
+    "Urban Boutique Hotel",
+    "Harbour View Hotel",
+    "Central Stay Hotel",
+    "Parkside Inn",
+    "Elite Comfort Hotel",
+    "Metro Grand Hotel",
+    "Riverside Business Hotel"
+  ],
+
+  Luxury: [
+    "Royal Palace Hotel",
+    "Elite Resort & Spa",
+    "Grand Imperial Hotel",
+    "Skyline Luxury Suites",
+    "Oceanfront Palace Resort",
+    "The Grand Regent",
+    "Diamond Bay Resort",
+    "Presidential Luxury Hotel",
+    "Aurora Grand Hotel",
+    "Golden Crown Palace"
+  ]
+};
+
+const foods = [
+  "Local Street Food Tour",
+  "Traditional Home-Style Cuisine",
+  "Fine Dining Experience",
+  "Hidden Local Restaurant Discovery",
+  "Night Market Food Crawl",
+  "Seafood Feast by the Coast",
+  "Authentic Regional Dish Tasting",
+  "Food Truck Street Sampling",
+  "Michelin Star Dining Experience",
+  "Dessert Café Hopping",
+  "Buffet Cultural Feast",
+  "Vegetarian Local Specialties Tour",
+  "Spice Market Food Walk",
+  "Farm-to-Table Dining Experience",
+  "Local Bakery & Pastry Crawl",
+  "Late Night Snack Run",
+  "Chef’s Special Tasting Menu"
+];
+
+const transport = [
+  "Metro / Subway System",
+  "Public Bus Network",
+  "Ride-sharing (Uber/Bolt/Lyft)",
+  "Traditional Taxi Service",
+  "Walking Friendly City Routes",
+  "Bike Rental Exploration",
+  "Scooter Rental Travel",
+  "Tram / Light Rail System",
+  "Ferry Boat Transfer",
+  "Private Chauffeur Service",
+  "Airport Express Train",
+  "Hop-on Hop-off Tourist Bus",
+  "Rental Car Road Trip",
+  "Cable Car Scenic Ride",
+  "Boat Taxi Experience"
+];
 
   const cost =
     budget === "Budget" ? days * 80 :
     budget === "Mid-Range" ? days * 180 :
     days * 400;
 
-  // =========================
-  // SMART ACTIVITY ENGINE
-  // =========================
-  const getSmartActivity = (categoryArray) => {
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-    if (!preferences) {
-      return categoryArray[Math.floor(Math.random() * categoryArray.length)];
-    }
-
-    const matched = categoryArray.filter(activity =>
-      preferences.split(",").some(pref =>
-        activity.toLowerCase().includes(pref.trim())
-      )
-    );
-
-    const pool = matched.length ? matched : categoryArray;
-    return pool[Math.floor(Math.random() * pool.length)];
-  };
-
-  // =========================
-  // SUMMARY
-  // =========================
   tripSummary.innerHTML = `
     <div class="day-card">
       <h3>${destination}</h3>
-      <p>${days} Days | ${travelers} Travelers</p>
-      <p>Estimated Cost: £${cost}</p>
-      <p><b>AI Style:</b> ${style}</p>
+      <p>${days} days</p>
+      <p>£${cost} </p>
     </div>
   `;
 
   itineraryContainer.innerHTML = "";
   currentPlan = [];
 
-  // =========================
-  // BUILD ITINERARY
-  // =========================
   for (let i = 1; i <= days; i++) {
 
     const date = new Date(startDate || Date.now());
     date.setDate(date.getDate() + i - 1);
 
-    const dayPlan = {
+    const day = {
       day: i,
       date: date.toDateString(),
-      morning: getSmartActivity(activities[style]),
-      afternoon: getSmartActivity(activities[style]),
-      evening: getSmartActivity(activities[style]),
-      hotel: hotels[budget][Math.floor(Math.random() * hotels[budget].length)],
-      food: foods[Math.floor(Math.random() * foods.length)],
-      transport: transport[Math.floor(Math.random() * transport.length)]
+
+      airport: i === 1
+        ? "✈️ Arrival: " + pick(airports.default)
+        : i === days
+        ? "✈️ Departure: " + pick(airports.default)
+        : "",
+
+      morning: pick(activities[style]),
+      afternoon: pick(activities[style]),
+      evening: pick(activities[style]),
+
+      hotel: pick(hotels[budget]),
+      food: pick(foods),
+      transport: pick(transport)
     };
 
-    currentPlan.push(dayPlan);
+    currentPlan.push(day);
 
     itineraryContainer.innerHTML += `
       <div class="day-card">
 
-        <h3>Day ${i} - ${destination}</h3>
-        <small>${dayPlan.date}</small>
+        <h3>Day ${i}</h3>
+        <small>${day.date}</small>
 
-        <div class="activity">🌅 Morning: ${dayPlan.morning}</div>
-        <div class="activity">☀️ Afternoon: ${dayPlan.afternoon}</div>
-        <div class="activity">🌙 Evening: ${dayPlan.evening}</div>
+        ${day.airport ? `<div class="activity"> ${day.airport}</div>` : ""}
 
-        ${document.getElementById("includeHotel").checked ? `
-        <div class="activity">🏨 Hotel: ${dayPlan.hotel}</div>` : ""}
+        <div class="activity">🌅 ${day.morning}</div>
+        <div class="activity">☀️ ${day.afternoon}</div>
+        <div class="activity">🌙 ${day.evening}</div>
 
-        ${document.getElementById("includeFood").checked ? `
-        <div class="activity">🍜 Food: ${dayPlan.food}</div>` : ""}
+        <div class="activity">🏨 ${day.hotel}</div>
+        <div class="activity">🍜 ${day.food}</div>
+        <div class="activity">🚕 ${day.transport}</div>
 
-        ${document.getElementById("includeTransport").checked ? `
-        <div class="activity">🚕 Transport: ${dayPlan.transport}</div>` : ""}
-
-        <div class="activity">
-          💰 Daily Budget: £${Math.round(cost / days)}
-        </div>
+        <div class="activity">💰 £${Math.round(cost / days)}/day</div>
 
       </div>
     `;
   }
+
+  showToast("Itinerary generated!");
 }
 
 // =========================
-// CLEAR PLAN
-// =========================
-function clearPlan() {
-  document.getElementById("tripSummary").innerHTML = "";
-  document.getElementById("itinerary").innerHTML = `
-    <div class="empty-state">
-      <i class="fa-solid fa-earth-americas"></i>
-      <p>Your AI itinerary will appear here.</p>
-    </div>
-  `;
-}
-
-// =========================
-// PDF DOWNLOAD
-// =========================
-function downloadPlan() {
-  const element = document.querySelector(".result-section");
-  html2pdf().from(element).save("travel-plan.pdf");
-}
-
-// =========================
-// SAVE TRIP
+// SAVE
 // =========================
 function saveTrip() {
   localStorage.setItem("travelPlan", JSON.stringify(currentPlan));
-  alert("Trip saved!");
+  showToast("Trip saved!");
 }
 
 // =========================
@@ -246,8 +346,38 @@ function exportJSON() {
 }
 
 // =========================
-// THEME TOGGLE
+// PDF EXPORT
 // =========================
-function toggleTheme() {
-  document.body.classList.toggle("dark");
+function downloadPlan() {
+  html2pdf().from(document.querySelector(".result-section"))
+    .save("travel-plan.pdf");
+}
+
+// =========================
+// LOAD SAVED PLAN
+// =========================
+function renderSavedPlan() {
+  const container = document.getElementById("itinerary");
+  container.innerHTML = "";
+
+  currentPlan.forEach(day => {
+    container.innerHTML += `
+      <div class="day-card">
+
+        <h3>Day ${day.day}</h3>
+        <small>${day.date}</small>
+
+        ${day.airport ? `<div class="activity"> ${day.airport}</div>` : ""}
+
+        <div class="activity">🌅 ${day.morning}</div>
+        <div class="activity">☀️ ${day.afternoon}</div>
+        <div class="activity">🌙 ${day.evening}</div>
+
+        <div class="activity">🏨 ${day.hotel}</div>
+        <div class="activity">🍜 ${day.food}</div>
+        <div class="activity">🚕 ${day.transport}</div>
+
+      </div>
+    `;
+  });
 }
