@@ -212,6 +212,16 @@ body.dark .packing-list {
   list-style: "🧳 ";
 }
 
+.weather-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #6366f1;
+  color: white;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
 /* =========================
    STATS
 ========================= */
