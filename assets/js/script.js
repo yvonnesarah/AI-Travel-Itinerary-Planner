@@ -5,11 +5,14 @@ let currentPlan = [];
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
 
+  // Load Theme
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
   }
 
+  // Load Saved Plan
   const saved = localStorage.getItem("travelPlan");
+
   if (saved) {
     currentPlan = JSON.parse(saved);
     renderSavedPlan();
@@ -20,45 +23,35 @@ document.addEventListener("DOMContentLoaded", () => {
 // TOAST
 // =========================
 function showToast(msg) {
+
   const toast = document.getElementById("toast");
+
   toast.innerText = msg;
   toast.classList.add("show");
 
-  setTimeout(() => toast.classList.remove("show"), 2500);
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2500);
 }
 
 // =========================
-// THEME
+// THEME TOGGLE
 // =========================
 function toggleTheme() {
+
   document.body.classList.toggle("dark");
 
   localStorage.setItem(
     "theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
+    document.body.classList.contains("dark")
+      ? "dark"
+      : "light"
   );
 }
 
 // =========================
-// GENERATE ITINERARY
+// DATA
 // =========================
-function generateItinerary() {
-
-  const destination = document.getElementById("destination").value;
-  const days = parseInt(document.getElementById("days").value);
-  const budget = document.getElementById("budget").value;
-  const style = document.getElementById("style").value;
-  const startDate = document.getElementById("startDate").value;
-
-  const itineraryContainer = document.getElementById("itinerary");
-  const tripSummary = document.getElementById("tripSummary");
-
-  if (!destination || !days) {
-    showToast("Enter destination & days");
-    return;
-  }
-
-  itineraryContainer.innerHTML = "⏳ Generating...";
 
   const activities = {
   Adventure: [
@@ -165,15 +158,6 @@ function generateItinerary() {
   ]
 };
 
-const airports = {
-  default: [
-    "International Airport Arrival Terminal",
-    "City Airport Transfer Hub",
-    "Main International Airport",
-    "Regional Airport Terminal"
-  ]
-};
-
 const hotels = {
   Budget: [
     "City Hostel",
@@ -253,67 +237,152 @@ const transport = [
   "Boat Taxi Experience"
 ];
 
+ // =========================
+// GENERATE ITINERARY
+// =========================
+function generateItinerary() {
+
+  const destination =
+    document.getElementById("destination").value;
+
+  const days =
+    parseInt(document.getElementById("days").value);
+
+  const budget =
+    document.getElementById("budget").value;
+
+  const style =
+    document.getElementById("style").value;
+
+  const startDate =
+    document.getElementById("startDate").value;
+
+  const itineraryContainer =
+    document.getElementById("itinerary");
+
+  const tripSummary =
+    document.getElementById("tripSummary");
+
+  // Validation
+  if (!destination || !days) {
+    showToast("Enter destination & days");
+    return;
+  }
+
+  itineraryContainer.innerHTML =
+    "⏳ Generating itinerary...";
+
+  // Random picker
+  const pick = (arr) =>
+    arr[Math.floor(Math.random() * arr.length)];
+
+  // Budget estimation
   const cost =
-    budget === "Budget" ? days * 80 :
-    budget === "Mid-Range" ? days * 180 :
-    days * 400;
+    budget === "Budget"
+      ? days * 80
+      : budget === "Mid-Range"
+      ? days * 180
+      : days * 400;
 
-  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
+  // Summary Card
   tripSummary.innerHTML = `
     <div class="day-card">
       <h3>${destination}</h3>
-      <p>${days} days</p>
-      <p>£${cost} </p>
+      <p>${days} days trip</p>
+      <p>Cost: £${cost}</p>
+      <p>Travel Style: ${style}</p>
     </div>
   `;
 
   itineraryContainer.innerHTML = "";
+
   currentPlan = [];
 
+  // Time Slots
+  const timeSlots = {
+    morning: "08:00 - 11:00",
+    midday: "12:00 - 14:00",
+    afternoon: "14:30 - 17:30",
+    evening: "18:00 - 22:00"
+  };
+
+  // Build Days
   for (let i = 1; i <= days; i++) {
 
-    const date = new Date(startDate || Date.now());
+    const date =
+      new Date(startDate || Date.now());
+
     date.setDate(date.getDate() + i - 1);
 
     const day = {
+
       day: i,
+
       date: date.toDateString(),
 
-      airport: i === 1
-        ? "✈️ Arrival: " + pick(airports.default)
-        : i === days
-        ? "✈️ Departure: " + pick(airports.default)
-        : "",
+      schedule: {
 
-      morning: pick(activities[style]),
-      afternoon: pick(activities[style]),
-      evening: pick(activities[style]),
+        morning: {
+          time: timeSlots.morning,
+          activity: pick(activities[style])
+        },
 
-      hotel: pick(hotels[budget]),
-      food: pick(foods),
-      transport: pick(transport)
+        midday: {
+          time: timeSlots.midday,
+          activity: pick(foods)
+        },
+
+        afternoon: {
+          time: timeSlots.afternoon,
+          activity: pick(activities[style])
+        },
+
+        evening: {
+          time: timeSlots.evening,
+          activity: pick(transport)
+        }
+      },
+
+      hotel: pick(hotels[budget])
     };
 
     currentPlan.push(day);
 
     itineraryContainer.innerHTML += `
+
       <div class="day-card">
 
         <h3>Day ${i}</h3>
+
         <small>${day.date}</small>
 
-        ${day.airport ? `<div class="activity"> ${day.airport}</div>` : ""}
+        <div class="activity">
+          🌅 ${day.schedule.morning.time}
+          — ${day.schedule.morning.activity}
+        </div>
 
-        <div class="activity">🌅 ${day.morning}</div>
-        <div class="activity">☀️ ${day.afternoon}</div>
-        <div class="activity">🌙 ${day.evening}</div>
+        <div class="activity">
+          🍽️ ${day.schedule.midday.time}
+          — ${day.schedule.midday.activity}
+        </div>
 
-        <div class="activity">🏨 ${day.hotel}</div>
-        <div class="activity">🍜 ${day.food}</div>
-        <div class="activity">🚕 ${day.transport}</div>
+        <div class="activity">
+          ☀️ ${day.schedule.afternoon.time}
+          — ${day.schedule.afternoon.activity}
+        </div>
 
-        <div class="activity">💰 £${Math.round(cost / days)}/day</div>
+        <div class="activity">
+          🌙 ${day.schedule.evening.time}
+          — ${day.schedule.evening.activity}
+        </div>
+
+        <div class="activity">
+          🏨 ${day.hotel}
+        </div>
+
+        <div class="activity">
+          💰 £${Math.round(cost / days)}/day
+        </div>
 
       </div>
     `;
@@ -323,10 +392,15 @@ const transport = [
 }
 
 // =========================
-// SAVE
+// SAVE TRIP
 // =========================
 function saveTrip() {
-  localStorage.setItem("travelPlan", JSON.stringify(currentPlan));
+
+  localStorage.setItem(
+    "travelPlan",
+    JSON.stringify(currentPlan)
+  );
+
   showToast("Trip saved!");
 }
 
@@ -334,14 +408,21 @@ function saveTrip() {
 // EXPORT JSON
 // =========================
 function exportJSON() {
-  const blob = new Blob([JSON.stringify(currentPlan, null, 2)], {
-    type: "application/json"
-  });
+
+  const blob = new Blob(
+    [JSON.stringify(currentPlan, null, 2)],
+    {
+      type: "application/json"
+    }
+  );
 
   const url = URL.createObjectURL(blob);
+
   const a = document.createElement("a");
+
   a.href = url;
   a.download = "travel-plan.json";
+
   a.click();
 }
 
@@ -349,7 +430,9 @@ function exportJSON() {
 // PDF EXPORT
 // =========================
 function downloadPlan() {
-  html2pdf().from(document.querySelector(".result-section"))
+
+  html2pdf()
+    .from(document.querySelector(".result-section"))
     .save("travel-plan.pdf");
 }
 
@@ -357,25 +440,45 @@ function downloadPlan() {
 // LOAD SAVED PLAN
 // =========================
 function renderSavedPlan() {
-  const container = document.getElementById("itinerary");
+
+  const container =
+    document.getElementById("itinerary");
+
   container.innerHTML = "";
 
   currentPlan.forEach(day => {
+
     container.innerHTML += `
+
       <div class="day-card">
 
         <h3>Day ${day.day}</h3>
+
         <small>${day.date}</small>
 
-        ${day.airport ? `<div class="activity"> ${day.airport}</div>` : ""}
+        <div class="activity">
+          🌅 ${day.schedule.morning.time}
+          — ${day.schedule.morning.activity}
+        </div>
 
-        <div class="activity">🌅 ${day.morning}</div>
-        <div class="activity">☀️ ${day.afternoon}</div>
-        <div class="activity">🌙 ${day.evening}</div>
+        <div class="activity">
+          🍽️ ${day.schedule.midday.time}
+          — ${day.schedule.midday.activity}
+        </div>
 
-        <div class="activity">🏨 ${day.hotel}</div>
-        <div class="activity">🍜 ${day.food}</div>
-        <div class="activity">🚕 ${day.transport}</div>
+        <div class="activity">
+          ☀️ ${day.schedule.afternoon.time}
+          — ${day.schedule.afternoon.activity}
+        </div>
+
+        <div class="activity">
+          🌙 ${day.schedule.evening.time}
+          — ${day.schedule.evening.activity}
+        </div>
+
+        <div class="activity">
+          🏨 ${day.hotel}
+        </div>
 
       </div>
     `;
