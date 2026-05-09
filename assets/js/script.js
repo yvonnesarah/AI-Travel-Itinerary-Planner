@@ -6,65 +6,33 @@ let toastTimeout;
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Load Theme
+  // Theme load
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
-    showToast("Dark mode enabled 🌙", "info");
   }
 
-  const saveBtn =
-    document.querySelector(
-      'button[onclick="saveTrip()"]'
-    );
-
-  // Load Saved Plan
-  const saved = localStorage.getItem("travelPlan");
-
-  if (saved) {
-
-    currentPlan = JSON.parse(saved);
-
-    renderSavedPlan();
-
-    saveBtn.innerHTML =
-      "❌ Remove Saved Trip";
-
-    showToast("Saved trip loaded ✈️");
-
-  } else {
-
-    saveBtn.innerHTML =
-      "💾 Save Trip";
-
-    showToast(
-      "Welcome to AI Travel Itinerary Planner ✈️",
-      "info"
-    );
+  else {
+    showToast("Welcome to AI Travel Planner ✈️", "info");
   }
 });
 
 // =========================
-// TOAST
+// TOAST 
 // =========================
 function showToast(msg, type = "success") {
 
   const toast = document.getElementById("toast");
+  if (!toast) return;
 
   clearTimeout(toastTimeout);
 
   toast.innerText = msg;
+  toast.className = "toast show";
 
-  toast.className = "toast";
+  // reset & apply type
+  toast.classList.remove("error", "info", "success");
 
-  toast.classList.add("show");
-
-  if (type === "error") {
-    toast.classList.add("error");
-  }
-
-  if (type === "info") {
-    toast.classList.add("info");
-  }
+  if (type) toast.classList.add(type);
 
   toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
@@ -72,16 +40,15 @@ function showToast(msg, type = "success") {
 }
 
 // =========================
-// THEME TOGGLE
+// THEME
 // =========================
 function toggleTheme() {
 
   document.body.classList.toggle("dark");
 
-  const theme =
-    document.body.classList.contains("dark")
-      ? "dark"
-      : "light";
+  const theme = document.body.classList.contains("dark")
+    ? "dark"
+    : "light";
 
   localStorage.setItem("theme", theme);
 
@@ -92,7 +59,6 @@ function toggleTheme() {
     "info"
   );
 }
-
 // =========================
 // DATA
 // =========================
@@ -281,225 +247,315 @@ const transport = [
   "Boat Taxi Experience"
 ];
 
-// =========================
-// GENERATE ITINERARY
-// =========================
+
+/* =========================
+   WEATHER SYSTEM (SIMULATED DAILY)
+========================= */
+
+const weatherTypes = [
+  "Sunny ☀️",
+  "Cloudy ☁️",
+  "Rainy 🌧️",
+  "Windy 🌬️",
+  "Partly Cloudy ⛅"
+];
+
+/* =========================
+   WEATHER TIP ENGINE
+========================= */
+
+function getWeatherTip(weather) {
+
+  if (weather.includes("Rain")) {
+    return "Carry umbrella ☔ & focus on indoor attractions";
+  }
+
+  if (weather.includes("Sunny")) {
+    return "Perfect for outdoor activities 🌞 Use sunscreen";
+  }
+
+  if (weather.includes("Wind")) {
+    return "Avoid high altitude or boat activities 🌬️";
+  }
+
+  if (weather.includes("Cloud")) {
+    return "Good sightseeing weather 🚶 Comfortable for walking";
+  }
+
+  return "Check conditions before heading out";
+}
+
+
+function getPackingList(weather) {
+
+  let items = [];
+
+  if (weather.includes("Rain")) {
+    items.push("☔ Umbrella");
+    items.push("🧥 Waterproof jacket");
+    items.push("👟 Waterproof shoes");
+  }
+
+  if (weather.includes("Sunny")) {
+    items.push("🧴 Sunscreen");
+    items.push("🕶 Sunglasses");
+    items.push("🧢 Hat / Cap");
+  }
+
+  if (weather.includes("Wind")) {
+    items.push("🧥 Light jacket");
+  }
+
+  if (weather.includes("Cloud")) {
+    items.push("👕 Comfortable clothing");
+  }
+
+  // always included essentials
+  items.push("📱 Phone charger");
+  items.push("🪪 ID / Passport");
+  items.push("💳 Wallet");
+
+  return items;
+}
+
+/* =========================
+   WEATHER
+========================= */
+
+async function fetchWeather(destination){
+
+    document.getElementById("weatherBox").innerHTML =
+  "<div class='activity'>🌍 Loading weather...</div>";
+
+  try{
+
+    const apiKey =
+      "81c0d22b83ccbe180ccf4acf19f7d978";
+
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${destination}&appid=${apiKey}&units=metric`
+    );
+
+   const data = await res.json();
+
+if (!data.main) {
+  throw new Error("Invalid weather response");
+}
+
+    document.getElementById("weatherBox").innerHTML = `
+
+      <div class="day-card">
+
+        <h3>🌍 Current Weather in ${data.name}</h3>
+
+        <div class="activity">🌡 Temp: ${data.main.temp}°C</div>
+        <div class="activity">🤔 Feels: ${data.main.feels_like}°C</div>
+        <div class="activity">☁️ ${data.weather[0].description}</div>
+        <div class="activity">💧 Humidity: ${data.main.humidity}%</div>
+        <div class="activity">🌬 Wind: ${data.wind.speed} m/s</div>
+        <div class="activity">🔵 Pressure: ${data.main.pressure} hPa</div>
+        <div class="activity">👀 Visibility: ${data.visibility / 1000} km</div>
+
+      </div>
+
+    `;
+
+} catch (err) {
+  console.error(err);
+  showToast("Weather unavailable ❌", "error");
+  }
+}
+
+/* =========================
+   FAVORITES
+========================= */
+
+function saveFavorite(activity){
+
+  let favs = JSON.parse(localStorage.getItem("favorites")) || [];
+
+  favs.push(activity);
+
+  localStorage.setItem("favorites", JSON.stringify(favs));
+
+  showToast("Added to favourites ❤️");
+}
+
+/* =========================
+   COLLAPSE
+========================= */
+
+function toggleDay(id){
+
+  document
+    .getElementById(id)
+    .classList.toggle("hidden");
+}
+
+/* =========================
+   GENERATE ITINERARY
+========================= */
+
 function generateItinerary() {
 
-  const destination =
-    document.getElementById("destination").value;
+const destination = document.getElementById("destination").value;
+const days = parseInt(document.getElementById("days").value);
+const budget = document.getElementById("budget").value;
+const style = document.getElementById("style").value;
+const travelers = document.getElementById("travelers").value;
+const startDate = document.getElementById("startDate").value;
 
-  const days =
-    parseInt(document.getElementById("days").value);
+fetchWeather(destination); 
 
-  const budget =
-    document.getElementById("budget").value;
-
-  const style =
-    document.getElementById("style").value;
-
-  const startDate =
-    document.getElementById("startDate").value;
-
-  const itineraryContainer =
-    document.getElementById("itinerary");
-
-  const tripSummary =
-    document.getElementById("tripSummary");
-
-  // Validation
-  if (!destination.trim()) {
-    showToast("Please enter a destination", "error");
+  if (!destination || !days) {
+    showToast("Fill all fields", "error");
     return;
   }
 
-  if (!days || days <= 0) {
-    showToast("Please enter valid trip days", "error");
-    return;
-  }
-
-  showToast("Generating smart itinerary...");
-
-  itineraryContainer.innerHTML =
-    "⏳ Generating itinerary...";
-
-  // Random picker
-  const pick = (arr) =>
+  const pick = arr =>
     arr[Math.floor(Math.random() * arr.length)];
 
-  // Budget estimation
-  const cost =
-    budget === "Budget"
-      ? days * 80
-      : budget === "Mid-Range"
-      ? days * 180
-      : days * 400;
+  // PRICE PER DAY
+  let baseCost =
+    budget === "Budget" ? 80 :
+    budget === "Mid-Range" ? 180 : 400;
 
-  // Summary Card
-  tripSummary.innerHTML = `
-    <div class="day-card">
-      <h3>${destination}</h3>
-      <p>${days} days trip</p>
-      <p>Cost: £${cost}</p>
-      <p>Travel Style: ${style}</p>
+  let totalCost = baseCost * days;
+
+  document.getElementById("tripSummary").innerHTML = `
+
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <h3>${days}</h3>
+        <p>Days</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>${travelers}</h3>
+        <p>Travelers</p>
+      </div>
+
+      <div class="stat-card">
+        <h3>£${totalCost}</h3>
+        <p>Total Trip Cost</p>
+      </div>
+
     </div>
+
+    <div class="day-card">
+      <h2>${destination}</h2>
+      <p>${style} travel plan</p>
+    </div>
+
   `;
 
-  itineraryContainer.innerHTML = "";
+  const itinerary = document.getElementById("itinerary");
 
+  itinerary.innerHTML = "";
   currentPlan = [];
 
-  // Time Slots
-  const timeSlots = {
-    morning: "08:00 - 11:00",
-    midday: "12:00 - 14:00",
-    afternoon: "14:30 - 17:30",
-    evening: "18:00 - 22:00"
-  };
-
-  // Build Days
   for (let i = 1; i <= days; i++) {
 
-    const date =
-      new Date(startDate || Date.now());
+    const baseDate = startDate ? new Date(startDate) : new Date();
+    const date = new Date(baseDate);
+    date.setDate(baseDate.getDate() + i - 1);
 
-    date.setDate(date.getDate() + i - 1);
+    // 🌤 WEATHER + TIP
+    const weather = weatherTypes[i % weatherTypes.length];
+    const tip = getWeatherTip(weather);
+
+    const dayCost = baseCost; // 💰 DAILY PRICE
 
     const day = {
-
       day: i,
-
       date: date.toDateString(),
-
+      weather: weather,
+      tip: tip,
+      cost: dayCost,
+      packing: getPackingList(weather), 
+      hotel: pick(hotels[budget]),
       schedule: {
-
-        morning: {
-          time: timeSlots.morning,
-          activity: pick(activities[style])
-        },
-
-        midday: {
-          time: timeSlots.midday,
-          activity: pick(foods)
-        },
-
-        afternoon: {
-          time: timeSlots.afternoon,
-          activity: pick(activities[style])
-        },
-
-        evening: {
-          time: timeSlots.evening,
-          activity: pick(transport)
-        }
-      },
-
-      hotel: pick(hotels[budget])
+        morning: pick(activities[style]),
+        midday: pick(foods),
+        afternoon: pick(activities[style]),
+        evening: pick(transport)
+      }
     };
 
     currentPlan.push(day);
 
-    itineraryContainer.innerHTML += `
+    itinerary.innerHTML += `
 
       <div class="day-card">
 
-        <h3>Day ${i}</h3>
+        <div class="day-header"
+          onclick="toggleDay('d${i}')">
 
-        <small>${day.date}</small>
+          <div>
+            <h3>Day ${i}</h3>
+            <small>${day.date}</small>
+          </div>
 
-        <div class="activity">
-          🌅 ${day.schedule.morning.time}
-          — ${day.schedule.morning.activity}
+          <i class="fa-solid fa-chevron-down"></i>
+
         </div>
 
-        <div class="activity">
-          🍽️ ${day.schedule.midday.time}
-          — ${day.schedule.midday.activity}
-        </div>
+        <div class="day-content" id="d${i}">
 
-        <div class="activity">
-          ☀️ ${day.schedule.afternoon.time}
-          — ${day.schedule.afternoon.activity}
-        </div>
+        <div class="activity">🎒 Packing List:</div>
 
-        <div class="activity">
-          🌙 ${day.schedule.evening.time}
-          — ${day.schedule.evening.activity}
-        </div>
+        <ul class="packing-list">
+        ${day.packing.map(item => `<li>${item}</li>`).join("")}
+         </ul>
 
-        <div class="activity">
-          🏨 ${day.hotel}
-        </div>
+          <div class="activity">🌤 Weather: ${day.weather}</div>
 
-        <div class="activity">
-          💰 £${Math.round(cost / days)}/day
-        </div>
+          <div class="activity">💡 Tip: ${day.tip}</div>
+
+          <div class="activity">Day Cost: £${day.cost}</div>
+
+           <div class="activity">🌅 ${day.schedule.morning}</div>
+           <div class="activity">🍽️ ${day.schedule.midday}</div>
+           <div class="activity">☀️ ${day.schedule.afternoon}</div>
+           <div class="activity">🌙 ${day.schedule.evening}</div>
+
+          <div class="activity">🏨 ${day.hotel}</div>
+
+        <!-- ⭐ Favourite moved to end -->
+       <div class="activity">
+  ❤️ Favourite this day
+  <button class="favorite-btn"
+    onclick="saveFavorite('Day ${i} - ${day.schedule.morning}')">
+    ❤️
+  </button>
+</div>
 
       </div>
+
     `;
   }
 
-  showToast("Itinerary generated successfully ✨");
+  showToast("Trip generated ✨");
 }
 
-// =========================
-// SAVE / UNSAVE TRIP
-// =========================
-function saveTrip() {
+/* =========================
+   EXPORT JSON
+========================= */
 
-  const saveBtn =
-    document.querySelector(
-      'button[onclick="saveTrip()"]'
-    );
+function exportJSON(){
 
-  // No plan generated
-  if (currentPlan.length === 0) {
-    showToast("Generate a trip first", "error");
-    return;
-  }
-
-  // Already saved → remove it
-  if (localStorage.getItem("travelPlan")) {
-
-    localStorage.removeItem("travelPlan");
-
-    showToast("Saved trip removed 🗑️", "info");
-
-    saveBtn.innerHTML = "💾 Save Trip";
-
-    return;
-  }
-
-  // Save trip
-  localStorage.setItem(
-    "travelPlan",
-    JSON.stringify(currentPlan)
-  );
-
-  showToast("Trip saved successfully 💾");
-
-  saveBtn.innerHTML = "❌ Remove Saved Trip";
-}
-
-// =========================
-// EXPORT JSON
-// =========================
-function exportJSON() {
-
-  if (currentPlan.length === 0) {
-    showToast("No trip data to export", "error");
+  if(currentPlan.length === 0){
+    showToast("No trip to export ❌", "error");
     return;
   }
 
   const blob = new Blob(
-    [JSON.stringify(currentPlan, null, 2)],
-    {
-      type: "application/json"
-    }
+    [JSON.stringify(currentPlan,null,2)],
+    { type:"application/json" }
   );
 
   const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
 
   a.href = url;
@@ -507,79 +563,53 @@ function exportJSON() {
 
   a.click();
 
-  showToast("JSON exported successfully 📄");
+  showToast("JSON exported 📄");
 }
 
-// =========================
-// PDF EXPORT
-// =========================
-function downloadPlan() {
+/* =========================
+   PDF
+========================= */
 
-  if (currentPlan.length === 0) {
-    showToast("Generate a trip before downloading", "error");
+function downloadPlan(){
+
+  if(currentPlan.length === 0){
+    showToast("Generate a trip first ❌", "error");
     return;
   }
 
-  showToast("Generating PDF...");
+  showToast("Generating PDF ⏳", "info");
 
   html2pdf()
     .from(document.querySelector(".result-section"))
     .save("travel-plan.pdf")
     .then(() => {
-      showToast("PDF downloaded successfully ⬇");
-    })
-    .catch(() => {
-      showToast("PDF generation failed", "error");
+      showToast("PDF downloaded 📥");
     });
 }
 
-// =========================
-// LOAD SAVED PLAN
-// =========================
 function renderSavedPlan() {
+  if (!currentPlan.length) return;
 
-  const container =
-    document.getElementById("itinerary");
+  const itinerary = document.getElementById("itinerary");
+  itinerary.innerHTML = "";
 
-  container.innerHTML = "";
-
-  currentPlan.forEach(day => {
-
-    container.innerHTML += `
-
+  currentPlan.forEach((day, i) => {
+    itinerary.innerHTML += `
       <div class="day-card">
-
-        <h3>Day ${day.day}</h3>
-
-        <small>${day.date}</small>
-
-        <div class="activity">
-          🌅 ${day.schedule.morning.time}
-          — ${day.schedule.morning.activity}
+        <div class="day-header" onclick="toggleDay('saved${i}')">
+          <div>
+            <h3>Day ${day.day}</h3>
+            <small>${day.date}</small>
+          </div>
+          <i class="fa-solid fa-chevron-down"></i>
         </div>
 
-        <div class="activity">
-          🍽️ ${day.schedule.midday.time}
-          — ${day.schedule.midday.activity}
+        <div class="day-content" id="saved${i}">
+          <div class="activity">🌤 Weather: ${day.weather}</div>
+          <div class="activity">💡 Tip: ${day.tip}</div>
+          <div class="activity">🏨 ${day.hotel}</div>
         </div>
-
-        <div class="activity">
-          ☀️ ${day.schedule.afternoon.time}
-          — ${day.schedule.afternoon.activity}
-        </div>
-
-        <div class="activity">
-          🌙 ${day.schedule.evening.time}
-          — ${day.schedule.evening.activity}
-        </div>
-
-        <div class="activity">
-          🏨 ${day.hotel}
-        </div>
-
       </div>
     `;
   });
-
-  showToast("Saved itinerary restored ✨");
 }
