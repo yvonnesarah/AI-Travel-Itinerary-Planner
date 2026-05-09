@@ -325,19 +325,29 @@ body.dark .empty-state {
 ========================= */
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #111827;
+  bottom: 30px;
+  right: 30px;
+  background: #111;
   color: white;
-  padding: 12px 18px;
-  border-radius: 10px;
+  padding: 14px 22px;
+  border-radius: 12px;
   opacity: 0;
   transform: translateY(20px);
-  transition: 0.3s;
-  z-index: 999;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .toast.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+.toast.error {
+  background: #e53935;
+}
+
+.toast.info {
+  background: #1976d2;
 }
