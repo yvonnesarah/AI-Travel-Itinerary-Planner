@@ -13,6 +13,8 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -29,17 +31,14 @@
 
     <h1>AI Travel Itinerary Planner</h1>
 
-    <p>
-      Build personalized trips with hotels, food,
-      weather, and daily cost tracking.
-    </p>
+    <p>Build personalized trips with hotels, food, weather, and daily cost tracking.</p>
 
     <div class="button-group hero-buttons">
 
       <button class="btn secondary-btn" onclick="toggleTheme()">🌙 Theme</button>
       <button class="btn secondary-btn" onclick="exportJSON()">📄 Export</button>
       <button class="btn primary-btn" onclick="saveTrip()">💾 Save Trip</button>
-      <button class="btn secondary-btn" onclick="loadLastTrip()">📂 Load Trip</button>
+      <button class="btn primary-btn" onclick="saveFavoriteTrip()">❤️ Favourite Trip</button>
 
     </div>
 
@@ -54,11 +53,8 @@
       <input type="text" id="destination" placeholder="Destination">
 
       <div class="grid-2">
-
         <input type="date" id="startDate">
-
         <input type="number" id="days" placeholder="Days">
-
       </div>
 
       <div class="grid-2">
@@ -78,22 +74,22 @@
         </select>
 
         <select id="tripMood">
-         <option value="all">Trip Mood</option>
-         <option value="outdoor">Outdoor</option>
-         <option value="indoor">Indoor</option>
-         <option value="luxury">Luxury</option>
-         <option value="budget">Budget Friendly</option>
-       </select>
+          <option value="all">Trip Mood</option>
+          <option value="outdoor">Outdoor</option>
+          <option value="indoor">Indoor</option>
+          <option value="luxury">Luxury</option>
+          <option value="budget">Budget Friendly</option>
+        </select>
 
-       <select id="currency">
-        <option value="GBP">GBP (£)</option>
-        <option value="USD">USD ($)</option>
-        <option value="EUR">EUR (€)</option>
-       </select>
+        <select id="currency">
+          <option value="GBP">GBP (£)</option>
+          <option value="USD">USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+        </select>
 
       </div>
 
-      <input type="number" id="travelers" value="2" min="1" placeholder="Travelers">
+      <input type="number" id="travelers" value="2" min="1">
 
       <button class="btn primary-btn" onclick="generateItinerary()">
         ✨ Generate Itinerary
@@ -113,50 +109,35 @@
       </div>
 
       <div id="weatherBox"></div>
-
       <div id="tripSummary"></div>
-
       <div id="countdown"></div>
-
       <div id="map"></div>
-
       <div id="budgetBreakdown"></div>
 
       <canvas id="budgetChart"></canvas>
 
-      <div id="expenseTracker">
-
-  <h3>💰 Expense Tracker</h3>
-
-  <div class="grid-2">
-
-    <input
-      type="number"
-      id="expenseInput"
-      placeholder="Add expense">
-
-    <button
-      class="btn primary-btn"
-      onclick="addExpense()">
-      Add
-    </button>
-
-  </div>
-
-  <div id="expenseList"></div>
-
-</div>
+      <div id="expenseList"></div>
 
       <div id="itinerary"></div>
 
     </div>
 
   </div>
+
+  <!-- FAVORITES -->
+  <div id="favoriteTripsContainer">
+
+    <div class="result-header">
+      <h2>❤️ Favourite Trips</h2>
+    </div>
+
+    <div id="favoriteTripsList"></div>
+
+  </div>
+
 </div>
 
 <div id="toast" class="toast"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script src="assets/js/script.js"></script>
 
