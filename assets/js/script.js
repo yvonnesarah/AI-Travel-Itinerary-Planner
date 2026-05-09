@@ -12,7 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.add("dark");
   }
 
-  else {
+   renderFavoriteTrips();
+
+  // ✅ AUTO LOAD LAST SAVED TRIP
+  const savedTrips =
+    JSON.parse(localStorage.getItem("savedTrips")) || [];
+
+  if (savedTrips.length) {
+    currentPlan = savedTrips[savedTrips.length - 1].plan;
+    renderSavedPlan();
+  }
+
+  if (!localStorage.getItem("theme")) {
     showToast("Welcome to AI Travel Planner ✈️", "info");
   }
 });
@@ -183,45 +194,6 @@ function getAISuggestion(style, weather){
   return "Explore local attractions nearby ✨";
 }
 
-let expenses = [];
-
-function addExpense(){
-
-  const value =
-    document.getElementById(
-      "expenseInput"
-    ).value;
-
-  if(!value) return;
-
-  expenses.push(Number(value));
-
-  renderExpenses();
-
-  document.getElementById(
-    "expenseInput"
-  ).value = "";
-}
-
-function renderExpenses(){
-
-  const total =
-    expenses.reduce(
-      (a,b)=>a+b,
-      0
-    );
-
-  document.getElementById(
-    "expenseList"
-  ).innerHTML = `
-
-    <div class="expense-item">
-      Total Expenses:
-      ${formatCurrency(total)}
-    </div>
-
-  `;
-}
 
 // =========================
 // DATA
@@ -587,18 +559,201 @@ function getSmartWeatherAdvice(data) {
 }
 
 /* =========================
-   FAVORITES
+   FAVORITE TRIPS SYSTEM
 ========================= */
 
-function saveFavorite(activity){
+function saveFavoriteTrip(){
 
-  let favs = JSON.parse(localStorage.getItem("favorites")) || [];
+  if(!currentPlan.length){
 
-  favs.push(activity);
+    showToast(
+      "Generate a trip first ❌",
+      "error"
+    );
 
-  localStorage.setItem("favorites", JSON.stringify(favs));
+    return;
+  }
 
-  showToast("Added to favourites ❤️");
+  const destination =
+    document.getElementById("destination").value;
+
+  const days =
+    document.getElementById("days").value;
+
+  const budget =
+    document.getElementById("budget").value;
+
+  const style =
+    document.getElementById("style").value;
+
+  const favoriteTrip = {
+
+    id: Date.now(),
+
+    destination,
+
+    days,
+
+    budget,
+
+    style,
+
+    createdAt:
+      new Date().toLocaleDateString(),
+
+    plan: currentPlan
+  };
+
+  let favoriteTrips =
+    JSON.parse(
+      localStorage.getItem("favoriteTrips")
+    ) || [];
+
+  favoriteTrips.push(favoriteTrip);
+
+  localStorage.setItem(
+    "favoriteTrips",
+    JSON.stringify(favoriteTrips)
+  );
+
+  renderFavoriteTrips();
+
+  showToast(
+    "Trip added to favourites ❤️"
+  );
+}
+
+/* =========================
+   RENDER FAVOURITES
+========================= */
+
+function renderFavoriteTrips(){
+
+  const container =
+    document.getElementById(
+      "favoriteTripsList"
+    );
+
+  if(!container) return;
+
+  let favoriteTrips =
+    JSON.parse(
+      localStorage.getItem("favoriteTrips")
+    ) || [];
+
+  if(!favoriteTrips.length){
+
+    container.innerHTML = `
+
+      <div class="activity">
+        No favourite trips yet ❤️
+      </div>
+
+    `;
+
+    return;
+  }
+
+  container.innerHTML = "";
+
+  favoriteTrips.forEach(trip => {
+
+    container.innerHTML += `
+
+      <div class="favorite-trip-card">
+
+        <div class="favorite-trip-title">
+          ✈️ ${trip.destination}
+        </div>
+
+        <div class="favorite-trip-meta">
+          ${trip.days} Days
+        </div>
+
+        <div class="favorite-trip-meta">
+          ${trip.style}
+        </div>
+
+        <div class="favorite-trip-meta">
+          ${trip.budget}
+        </div>
+
+        <div class="favorite-trip-meta">
+          Saved: ${trip.createdAt}
+        </div>
+
+      <div class="favorite-trip-actions">
+
+  <button
+    class="btn primary-btn"
+    onclick="loadFavoriteTrip(${trip.id})">
+    📂 Load
+  </button>
+
+  <button
+    class="btn secondary-btn"
+    onclick="deleteFavoriteTrip(${trip.id})">
+    🗑 Delete
+  </button>
+
+</div>
+
+      </div>
+
+    `;
+  });
+}
+
+/* =========================
+   DELETE FAVOURITE
+========================= */
+
+function deleteFavoriteTrip(id){
+
+  let favoriteTrips =
+    JSON.parse(
+      localStorage.getItem("favoriteTrips")
+    ) || [];
+
+  favoriteTrips =
+    favoriteTrips.filter(
+      trip => trip.id !== id
+    );
+
+  localStorage.setItem(
+    "favoriteTrips",
+    JSON.stringify(favoriteTrips)
+  );
+
+  renderFavoriteTrips();
+
+  showToast(
+    "Favourite deleted 🗑"
+  );
+}
+
+function loadFavoriteTrip(id){
+
+  let favoriteTrips =
+    JSON.parse(
+      localStorage.getItem("favoriteTrips")
+    ) || [];
+
+  const trip =
+    favoriteTrips.find(
+      t => t.id === id
+    );
+
+  if(!trip){
+    showToast("Trip not found ❌","error");
+    return;
+  }
+
+  currentPlan = trip.plan;
+
+  renderSavedPlan();
+
+  showToast("Favourite trip loaded ✨");
 }
 
 /* =========================
@@ -746,16 +901,6 @@ fetchWeather(destination);
            <div class="activity">🌙 ${day.schedule.evening}</div>
 
           <div class="activity">🏨 ${day.hotel}</div>
-
-        <!-- ⭐ Favourite moved to end -->
-       <div class="activity">
-  ❤️ Favourite this day
-  <button class="favorite-btn"
-    onclick="saveFavorite('Day ${i} - ${day.schedule.morning}')">
-    ❤️
-  </button>
-</div>
-
       </div>
 
     `;
@@ -792,21 +937,7 @@ function saveTrip() {
   showToast("Trip saved 💾");
 }
 
-function loadLastTrip() {
 
-  let savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
-
-  if (!savedTrips.length) {
-    showToast("No saved trips found ❌", "error");
-    return;
-  }
-
-  currentPlan = savedTrips[savedTrips.length - 1].plan;
-
-  renderSavedPlan();
-
-  showToast("Last trip loaded 📂");
-}
 
 /* =========================
    EXPORT JSON
