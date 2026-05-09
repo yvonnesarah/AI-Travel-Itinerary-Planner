@@ -1,353 +1,354 @@
 /* =========================
-   BASE RESET
+   RESET
 ========================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Segoe UI", sans-serif;
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Segoe UI",sans-serif;
 }
 
 /* =========================
-   LIGHT THEME (DEFAULT)
+   BODY
 ========================= */
-body {
-  min-height: 100vh;
-  background: #f5f7fb;
-  color: #0f172a;
+
+body{
+  min-height:100vh;
+  background:#f5f7fb;
+  color:#0f172a;
 }
 
-/* =========================
-   DARK THEME
-========================= */
-body.dark {
-  background: #0b1220;
-  color: #e5e7eb;
+body.dark{
+  background:#0b1220;
+  color:#e5e7eb;
 }
 
 /* =========================
    LAYOUT
 ========================= */
-.container {
-  max-width: 1350px;
-  margin: auto;
-  padding: 40px 20px;
+
+.container{
+  max-width:1350px;
+  margin:auto;
+  padding:40px 20px;
 }
 
 /* =========================
-   HERO SECTION
+   HERO
 ========================= */
-.hero {
-  text-align: center;
-  margin-bottom: 35px;
+
+.hero{
+  text-align:center;
+  margin-bottom:35px;
 }
 
-.hero h1 {
-  font-size: 54px;
-  margin-bottom: 12px;
+.hero h1{
+  font-size:54px;
+  margin-bottom:12px;
 }
 
-.hero p {
-  max-width: 750px;
-  margin: auto;
-  line-height: 1.7;
-  font-size: 18px;
-  color: #475569;
+.hero p{
+  max-width:700px;
+  margin:auto;
+  line-height:1.7;
+  color:#475569;
 }
 
-body.dark .hero p {
-  color: #cbd5e1;
+body.dark .hero p{
+  color:#cbd5e1;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid #e2e8f0;
-  margin-bottom: 20px;
-  font-size: 13px;
-  color: #334155;
-  backdrop-filter: blur(10px);
+.hero-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 18px;
+  border-radius:999px;
+  background:white;
+  margin-bottom:20px;
 }
 
-body.dark .hero-badge {
-  background: rgba(17, 24, 39, 0.6);
-  border: 1px solid #1f2937;
-  color: #e5e7eb;
+.hero-buttons{
+  margin-top:20px;
+}
+
+body.dark .hero-badge{
+  background:#1f2937;
+  color:white;
 }
 
 /* =========================
-   MAIN CARD LAYOUT
+   CARD
 ========================= */
-.planner-card {
-  background: #ffffff;
-  border-radius: 24px;
-  padding: 30px;
-  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  gap: 30px;
+
+.planner-card{
+  background:white;
+  border-radius:24px;
+  padding:30px;
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:30px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.08);
 }
 
-body.dark .planner-card {
-  background: #111827;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+body.dark .planner-card{
+  background:#111827;
 }
 
 /* =========================
-   FORM SECTION
+   FORM
 ========================= */
-.form-section {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
 
-.section-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 20px;
-  font-weight: 700;
+.form-section{
+  display:flex;
+  flex-direction:column;
+  gap:18px;
 }
 
 /* =========================
    INPUTS
 ========================= */
-input,
-select,
-textarea {
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  background: #ffffff;
-  font-size: 14px;
-  outline: none;
-  transition: 0.2s ease;
-  color: #0f172a;
-}
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+input,
+select{
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #e2e8f0;
+  font-size:14px;
 }
 
 body.dark input,
-body.dark select,
-body.dark textarea {
-  background: #0f172a;
-  border-color: #1f2937;
-  color: #e5e7eb;
+body.dark select{
+  background:#0f172a;
+  border-color:#1f2937;
+  color:white;
 }
 
-body.dark input:focus,
-body.dark select:focus,
-body.dark textarea:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
-}
-
-/* =========================
-   GRID
-========================= */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 15px;
-}
-
-/* =========================
-   CHECKBOX GROUP
-========================= */
-.checkbox-group {
-  background: #f8fafc;
-  padding: 15px;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-body.dark .checkbox-group {
-  background: #0f172a;
-  border-color: #1f2937;
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
 }
 
 /* =========================
    BUTTONS
 ========================= */
-.button-group {
-  display: flex;
-  gap: 12px;
+
+.button-group{
+  display:flex;
+  gap:12px;
 }
 
-.btn {
-  flex: 1;
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s ease;
+.btn{
+  flex:1;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  cursor:pointer;
+  font-weight:600;
 }
 
-.primary-btn {
-  background: #6366f1;
-  color: white;
+.primary-btn{
+  background:#6366f1;
+  color:white;
 }
 
-.primary-btn:hover {
-  background: #4f46e5;
+.secondary-btn{
+  background:#e2e8f0;
 }
 
-.secondary-btn {
-  background: #e2e8f0;
-  color: #0f172a;
-}
-
-.secondary-btn:hover {
-  background: #cbd5e1;
-}
-
-body.dark .secondary-btn {
-  background: #1f2937;
-  color: #e5e7eb;
+body.dark .secondary-btn{
+  background:#1f2937;
+  color:white;
 }
 
 /* =========================
-   RESULT SECTION
+   RESULT
 ========================= */
-.result-section {
-  background: #f8fafc;
-  border-radius: 20px;
-  padding: 24px;
-  overflow-y: auto;
-  max-height: 780px;
-  border: 1px solid #e2e8f0;
+
+.result-section{
+  background:#f8fafc;
+  border-radius:20px;
+  padding:24px;
+  max-height:800px;
+  overflow-y:auto;
 }
 
-body.dark .result-section {
-  background: #0f172a;
-  border-color: #1f2937;
-}
-
-.result-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
+body.dark .result-section{
+  background:#0f172a;
 }
 
 /* =========================
-   DAY CARDS
+   WEATHER
 ========================= */
-.day-card {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 18px;
-  border: 1px solid #e2e8f0;
-  border-left: 4px solid #6366f1;
+
+#weatherBox{
+  background:#eef2ff;
+  padding:18px;
+  border-radius:18px;
+  margin-bottom:20px;
 }
 
-body.dark .day-card {
-  background: #111827;
-  border-color: #1f2937;
+body.dark #weatherBox{
+  background:#1e293b;
 }
 
-/* =========================
-   ACTIVITY BOXES
-========================= */
-.activity {
-  background: #eef2ff;
-  padding: 10px 12px;
-  border-radius: 10px;
+.packing-list {
   margin-top: 10px;
-  font-size: 14px;
-  color: #1e293b;
-}
-
-body.dark .activity {
-  background: #1e293b;
-  color: #e5e7eb;
-}
-
-/* =========================
-   TAGS
-========================= */
-.tag-row {
+  padding-left: 18px;
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #334155;
 }
 
-.tag {
-  background: #e0f2fe;
-  padding: 8px 14px;
-  border-radius: 50px;
-  font-size: 13px;
+body.dark .packing-list {
+  color: #cbd5e1;
 }
 
-/* =========================
-   EMPTY STATE
-========================= */
-.empty-state {
-  text-align: center;
-  padding: 80px 20px;
-  color: #94a3b8;
-}
-
-body.dark .empty-state {
-  color: #64748b;
+.packing-list li {
+  list-style: "🧳 ";
 }
 
 /* =========================
-   CLEAR BUTTON
+   STATS
 ========================= */
-.clear-btn {
-  background: #fee2e2;
-  color: #dc2626;
-  border: none;
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  cursor: pointer;
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.stat-card{
+  background:white;
+  padding:18px;
+  border-radius:18px;
+  text-align:center;
+}
+
+body.dark .stat-card{
+  background:#111827;
+}
+
+/* =========================
+   BUDGET
+========================= */
+
+.budget-card{
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  margin-bottom:20px;
+}
+
+body.dark .budget-card{
+  background:#111827;
+}
+
+.progress{
+  height:12px;
+  background:#e2e8f0;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:8px;
+  margin-bottom:16px;
+}
+
+.progress div{
+  height:100%;
+  background:#6366f1;
+}
+
+/* =========================
+   DAY CARD
+========================= */
+
+.day-card{
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:18px;
+}
+
+body.dark .day-card{
+  background:#111827;
+}
+
+.day-header{
+  display:flex;
+  justify-content:space-between;
+  cursor:pointer;
+}
+
+.day-content{
+  margin-top:16px;
+}
+
+.hidden{
+  display:none;
+}
+
+/* =========================
+   ACTIVITIES
+========================= */
+
+.activity{
+  background:#eef2ff;
+  padding:12px;
+  border-radius:12px;
+  margin-top:10px;
+}
+
+body.dark .activity{
+  background:#1e293b;
+}
+
+/* =========================
+   FAVORITES
+========================= */
+
+.favorite-btn{
+  margin-top:12px;
+  width:40px;
+  height:40px;
+  border:none;
+  border-radius:12px;
+  background:#fee2e2;
+  color:#dc2626;
+  cursor:pointer;
 }
 
 /* =========================
    TOAST
 ========================= */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #111;
-  color: white;
-  padding: 14px 22px;
-  border-radius: 12px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-  z-index: 9999;
-  font-weight: 600;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+.toast{
+  position:fixed;
+  bottom:30px;
+  right:30px;
+  background:#111;
+  color:white;
+  padding:14px 22px;
+  border-radius:12px;
+  opacity:0;
+  transform:translateY(20px);
+  transition:0.3s ease;
 }
 
-.toast.show {
-  opacity: 1;
-  transform: translateY(0);
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
 }
 
-.toast.error {
-  background: #e53935;
+.toast.error{
+  background:#e53935;
 }
 
 .toast.info {
   background: #1976d2;
+  color: white;
 }
