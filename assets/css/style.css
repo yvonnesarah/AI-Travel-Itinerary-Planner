@@ -15,12 +15,19 @@
 
 body{
   min-height:100vh;
-  background:#f5f7fb;
+
+  background:
+  linear-gradient(
+    135deg,
+    #f5f7fb,
+    #eef2ff
+  );
+
   color:#0f172a;
 }
 
 body.dark{
-  background:#0b1220;
+  background:#020617;
   color:#e5e7eb;
 }
 
@@ -69,13 +76,13 @@ body.dark .hero p{
   margin-bottom:20px;
 }
 
-.hero-buttons{
-  margin-top:20px;
-}
-
 body.dark .hero-badge{
   background:#1f2937;
-  color:white;
+}
+
+.hero-buttons{
+  margin-top:20px;
+  flex-wrap:wrap;
 }
 
 /* =========================
@@ -83,17 +90,30 @@ body.dark .hero-badge{
 ========================= */
 
 .planner-card{
-  background:white;
+  backdrop-filter:blur(20px);
+
+  background:
+  rgba(255,255,255,0.75);
+
   border-radius:24px;
+
   padding:30px;
+
   display:grid;
-  grid-template-columns:420px 1fr;
+
+  grid-template-columns:
+  420px 1fr;
+
   gap:30px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.08);
+
+  box-shadow:
+  0 20px 60px
+  rgba(0,0,0,0.08);
 }
 
 body.dark .planner-card{
-  background:#111827;
+  background:
+  rgba(17,24,39,0.85);
 }
 
 /* =========================
@@ -147,6 +167,11 @@ body.dark select{
   padding:14px;
   cursor:pointer;
   font-weight:600;
+  transition:0.25s ease;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
 }
 
 .primary-btn{
@@ -171,7 +196,7 @@ body.dark .secondary-btn{
   background:#f8fafc;
   border-radius:20px;
   padding:24px;
-  max-height:800px;
+  max-height:900px;
   overflow-y:auto;
 }
 
@@ -180,46 +205,27 @@ body.dark .result-section{
 }
 
 /* =========================
-   WEATHER
+   COUNTDOWN
 ========================= */
 
-#weatherBox{
-  background:#eef2ff;
-  padding:18px;
-  border-radius:18px;
+#countdown{
+  background:#6366f1;
+  color:white;
+  padding:14px;
+  border-radius:14px;
   margin-bottom:20px;
+  text-align:center;
+  font-weight:600;
 }
 
-body.dark #weatherBox{
-  background:#1e293b;
-}
+/* =========================
+   MAP 
+========================= */
 
-.packing-list {
-  margin-top: 10px;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 14px;
-  color: #334155;
-}
-
-body.dark .packing-list {
-  color: #cbd5e1;
-}
-
-.packing-list li {
-  list-style: "🧳 ";
-}
-
-.weather-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: #6366f1;
-  color: white;
-  font-size: 12px;
-  margin-bottom: 10px;
+#map{
+  margin-top:20px;
+  overflow:hidden;
+  border-radius:18px;
 }
 
 /* =========================
@@ -242,35 +248,6 @@ body.dark .packing-list {
 
 body.dark .stat-card{
   background:#111827;
-}
-
-/* =========================
-   BUDGET
-========================= */
-
-.budget-card{
-  background:white;
-  padding:20px;
-  border-radius:18px;
-  margin-bottom:20px;
-}
-
-body.dark .budget-card{
-  background:#111827;
-}
-
-.progress{
-  height:12px;
-  background:#e2e8f0;
-  border-radius:999px;
-  overflow:hidden;
-  margin-top:8px;
-  margin-bottom:16px;
-}
-
-.progress div{
-  height:100%;
-  background:#6366f1;
 }
 
 /* =========================
@@ -318,18 +295,72 @@ body.dark .activity{
 }
 
 /* =========================
-   FAVORITES
+   EXPENSE TRACKER
 ========================= */
 
-.favorite-btn{
-  margin-top:12px;
-  width:40px;
-  height:40px;
-  border:none;
+#expenseTracker{
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin-top:20px;
+}
+
+body.dark #expenseTracker{
+  background:#111827;
+}
+
+.expense-item{
+  background:#eef2ff;
+  padding:12px;
   border-radius:12px;
-  background:#fee2e2;
-  color:#dc2626;
-  cursor:pointer;
+  margin-top:10px;
+}
+
+body.dark .expense-item{
+  background:#1e293b;
+}
+
+/* =========================
+   FAVOURITES
+========================= */
+
+#favoriteTripsContainer{
+  margin-top:20px;
+}
+
+.favorite-trip-card{
+  background:white;
+  padding:20px;
+  border-radius:18px;
+  margin-top:16px;
+  border:1px solid #e2e8f0;
+}
+
+body.dark .favorite-trip-card{
+  background:#111827;
+  border-color:#1f2937;
+}
+
+.favorite-trip-title{
+  font-size:20px;
+  font-weight:700;
+  margin-bottom:10px;
+}
+
+.favorite-trip-meta{
+  color:#64748b;
+  font-size:14px;
+  margin-bottom:6px;
+}
+
+body.dark .favorite-trip-meta{
+  color:#cbd5e1;
+}
+
+.favorite-trip-actions{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
 }
 
 /* =========================
@@ -358,7 +389,6 @@ body.dark .activity{
   background:#e53935;
 }
 
-.toast.info {
-  background: #1976d2;
-  color: white;
+.toast.info{
+  background:#1976d2;
 }
