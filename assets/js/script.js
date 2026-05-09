@@ -1,4 +1,5 @@
 let currentPlan = [];
+let toastTimeout;
 
 // =========================
 // INIT
@@ -8,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load Theme
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
+    showToast("Dark mode enabled 🌙", "info");
   }
 
   // Load Saved Plan
@@ -16,20 +18,36 @@ document.addEventListener("DOMContentLoaded", () => {
   if (saved) {
     currentPlan = JSON.parse(saved);
     renderSavedPlan();
+    showToast("Saved trip loaded ✈️");
+  } else {
+    showToast("Welcome to AI Travel Planner ✈️", "info");
   }
 });
 
 // =========================
 // TOAST
 // =========================
-function showToast(msg) {
+function showToast(msg, type = "success") {
 
   const toast = document.getElementById("toast");
 
+  clearTimeout(toastTimeout);
+
   toast.innerText = msg;
+
+  toast.className = "toast";
+
   toast.classList.add("show");
 
-  setTimeout(() => {
+  if (type === "error") {
+    toast.classList.add("error");
+  }
+
+  if (type === "info") {
+    toast.classList.add("info");
+  }
+
+  toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
   }, 2500);
 }
@@ -41,11 +59,18 @@ function toggleTheme() {
 
   document.body.classList.toggle("dark");
 
-  localStorage.setItem(
-    "theme",
+  const theme =
     document.body.classList.contains("dark")
       ? "dark"
-      : "light"
+      : "light";
+
+  localStorage.setItem("theme", theme);
+
+  showToast(
+    theme === "dark"
+      ? "Dark mode enabled 🌙"
+      : "Light mode enabled ☀️",
+    "info"
   );
 }
 
@@ -53,7 +78,7 @@ function toggleTheme() {
 // DATA
 // =========================
 
-  const activities = {
+const activities = {
   Adventure: [
     "Mountain Hiking Trail",
     "Sunrise Summit Climb",
@@ -237,7 +262,7 @@ const transport = [
   "Boat Taxi Experience"
 ];
 
- // =========================
+// =========================
 // GENERATE ITINERARY
 // =========================
 function generateItinerary() {
@@ -264,10 +289,17 @@ function generateItinerary() {
     document.getElementById("tripSummary");
 
   // Validation
-  if (!destination || !days) {
-    showToast("Enter destination & days");
+  if (!destination.trim()) {
+    showToast("Please enter a destination", "error");
     return;
   }
+
+  if (!days || days <= 0) {
+    showToast("Please enter valid trip days", "error");
+    return;
+  }
+
+  showToast("Generating smart itinerary...");
 
   itineraryContainer.innerHTML =
     "⏳ Generating itinerary...";
@@ -388,7 +420,7 @@ function generateItinerary() {
     `;
   }
 
-  showToast("Itinerary generated!");
+  showToast("Itinerary generated successfully ✨");
 }
 
 // =========================
@@ -396,18 +428,28 @@ function generateItinerary() {
 // =========================
 function saveTrip() {
 
+  if (currentPlan.length === 0) {
+    showToast("Generate a trip first", "error");
+    return;
+  }
+
   localStorage.setItem(
     "travelPlan",
     JSON.stringify(currentPlan)
   );
 
-  showToast("Trip saved!");
+  showToast("Trip saved successfully 💾");
 }
 
 // =========================
 // EXPORT JSON
 // =========================
 function exportJSON() {
+
+  if (currentPlan.length === 0) {
+    showToast("No trip data to export", "error");
+    return;
+  }
 
   const blob = new Blob(
     [JSON.stringify(currentPlan, null, 2)],
@@ -424,6 +466,8 @@ function exportJSON() {
   a.download = "travel-plan.json";
 
   a.click();
+
+  showToast("JSON exported successfully 📄");
 }
 
 // =========================
@@ -431,9 +475,22 @@ function exportJSON() {
 // =========================
 function downloadPlan() {
 
+  if (currentPlan.length === 0) {
+    showToast("Generate a trip before downloading", "error");
+    return;
+  }
+
+  showToast("Generating PDF...");
+
   html2pdf()
     .from(document.querySelector(".result-section"))
-    .save("travel-plan.pdf");
+    .save("travel-plan.pdf")
+    .then(() => {
+      showToast("PDF downloaded successfully ⬇");
+    })
+    .catch(() => {
+      showToast("PDF generation failed", "error");
+    });
 }
 
 // =========================
@@ -483,4 +540,6 @@ function renderSavedPlan() {
       </div>
     `;
   });
+
+  showToast("Saved itinerary restored ✨");
 }
