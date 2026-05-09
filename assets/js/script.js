@@ -1,3 +1,4 @@
+let budgetChart;
 let currentPlan = [];
 let toastTimeout;
 
@@ -59,6 +60,169 @@ function toggleTheme() {
     "info"
   );
 }
+
+
+function formatCurrency(amount){
+
+  const currency =
+    document.getElementById("currency").value;
+
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      style:"currency",
+      currency
+    }
+  ).format(amount);
+}
+
+
+function loadMap(destination){
+
+  document.getElementById("map").innerHTML = `
+
+    <iframe
+      width="100%"
+      height="350"
+      frameborder="0"
+      style="border:0"
+      src="https://www.google.com/maps?q=${destination}&output=embed"
+      allowfullscreen>
+    </iframe>
+
+  `;
+}
+
+function startCountdown(startDate){
+
+  if(!startDate) return;
+
+  const countdown =
+    document.getElementById("countdown");
+
+  const interval = setInterval(()=>{
+
+    const tripDate =
+      new Date(startDate);
+
+    const now =
+      new Date();
+
+    const diff =
+      tripDate - now;
+
+    if(diff <= 0){
+
+      countdown.innerHTML =
+        "✈️ Trip Started!";
+
+      clearInterval(interval);
+
+      return;
+    }
+
+    const days =
+      Math.floor(
+        diff /
+        (1000*60*60*24)
+      );
+
+    countdown.innerHTML =
+      `⏳ ${days} days until your trip`;
+
+  },1000);
+}
+
+function renderBudgetChart(total){
+
+  const ctx =
+    document.getElementById("budgetChart");
+
+  if(budgetChart){
+    budgetChart.destroy();
+  }
+
+  budgetChart = new Chart(ctx,{
+
+    type:"doughnut",
+
+    data:{
+      labels:[
+        "Hotels",
+        "Food",
+        "Activities",
+        "Transport"
+      ],
+
+      datasets:[{
+        data:[
+          total * 0.4,
+          total * 0.2,
+          total * 0.25,
+          total * 0.15
+        ]
+      }]
+    }
+  });
+}
+
+function getAISuggestion(style, weather){
+
+  if(weather.includes("Rain")){
+    return "Visit museums and indoor cafés today ☔";
+  }
+
+  if(style === "Adventure"){
+    return "Perfect weather for outdoor exploration 🏔";
+  }
+
+  if(style === "Romantic"){
+    return "Book a sunset dinner tonight 🌅";
+  }
+
+  return "Explore local attractions nearby ✨";
+}
+
+let expenses = [];
+
+function addExpense(){
+
+  const value =
+    document.getElementById(
+      "expenseInput"
+    ).value;
+
+  if(!value) return;
+
+  expenses.push(Number(value));
+
+  renderExpenses();
+
+  document.getElementById(
+    "expenseInput"
+  ).value = "";
+}
+
+function renderExpenses(){
+
+  const total =
+    expenses.reduce(
+      (a,b)=>a+b,
+      0
+    );
+
+  document.getElementById(
+    "expenseList"
+  ).innerHTML = `
+
+    <div class="expense-item">
+      Total Expenses:
+      ${formatCurrency(total)}
+    </div>
+
+  `;
+}
+
 // =========================
 // DATA
 // =========================
@@ -493,7 +657,7 @@ fetchWeather(destination);
       </div>
 
       <div class="stat-card">
-        <h3>£${totalCost}</h3>
+        <h3>${formatCurrency(totalCost)}</h3>
         <p>Total Trip Cost</p>
       </div>
 
@@ -569,6 +733,11 @@ fetchWeather(destination);
 
           <div class="activity">💡 Tip: ${day.tip}</div>
 
+          <div class="activity">
+           🤖 AI Suggestion:
+           ${getAISuggestion(style, weather)}
+        </div>
+
           <div class="activity">Day Cost: £${day.cost}</div>
 
            <div class="activity">🌅 ${day.schedule.morning}</div>
@@ -591,6 +760,13 @@ fetchWeather(destination);
 
     `;
   }
+
+  loadMap(destination);
+
+startCountdown(startDate);
+
+renderBudgetChart(totalCost);
+
 
   showToast("Trip generated ✨");
 }
