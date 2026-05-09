@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
   <title>AI Travel Itinerary Planner</title>
 
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
@@ -14,21 +19,31 @@
 
 <div class="container">
 
+  <!-- HERO -->
   <div class="hero">
+
     <div class="hero-badge">
       <i class="fa-solid fa-location-dot"></i>
-      Smart AI Travel Assistant
+      Smart Travel Assistant
     </div>
 
     <h1>AI Travel Itinerary Planner</h1>
 
-    <p>Build personalized travel experiences with smart plans, hotels, food, and activities.</p>
+    <p>
+      Build personalized trips with hotels, food,
+      weather, and daily cost tracking.
+    </p>
 
-    <button class="btn secondary-btn" onclick="toggleTheme()">🌙 Toggle Theme</button>
-    <button class="btn secondary-btn" onclick="saveTrip()">💾 Save Trip</button>
-    <button class="btn secondary-btn" onclick="exportJSON()">📄 Export JSON</button>
+    <div class="button-group hero-buttons">
+
+      <button class="btn secondary-btn" onclick="toggleTheme()">🌙 Theme</button>
+      <button class="btn secondary-btn" onclick="exportJSON()">📄 Export</button>
+
+    </div>
+
   </div>
 
+  <!-- MAIN -->
   <div class="planner-card">
 
     <!-- FORM -->
@@ -37,11 +52,15 @@
       <input type="text" id="destination" placeholder="Destination">
 
       <div class="grid-2">
+
         <input type="date" id="startDate">
+
         <input type="number" id="days" placeholder="Days">
+
       </div>
 
       <div class="grid-2">
+
         <select id="budget">
           <option>Budget</option>
           <option>Mid-Range</option>
@@ -55,10 +74,10 @@
           <option>Romantic</option>
           <option>Food & Nightlife</option>
         </select>
+
       </div>
 
-      <input type="number" id="travelers" value="2">
-
+      <input type="number" id="travelers" value="2" min="1" placeholder="Travelers">
 
       <button class="btn primary-btn" onclick="generateItinerary()">
         ✨ Generate Itinerary
@@ -77,7 +96,12 @@
         <h2>Your Travel Plan</h2>
       </div>
 
+      <div id="weatherBox"></div>
+
       <div id="tripSummary"></div>
+
+      <div id="budgetBreakdown"></div>
+
       <div id="itinerary"></div>
 
     </div>
@@ -85,9 +109,9 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast" class="toast"></div>
 
 <script src="assets/js/script.js"></script>
+
 </body>
 </html>
