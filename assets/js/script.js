@@ -12,15 +12,34 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast("Dark mode enabled 🌙", "info");
   }
 
+  const saveBtn =
+    document.querySelector(
+      'button[onclick="saveTrip()"]'
+    );
+
   // Load Saved Plan
   const saved = localStorage.getItem("travelPlan");
 
   if (saved) {
+
     currentPlan = JSON.parse(saved);
+
     renderSavedPlan();
+
+    saveBtn.innerHTML =
+      "❌ Remove Saved Trip";
+
     showToast("Saved trip loaded ✈️");
+
   } else {
-    showToast("Welcome to AI Travel Planner ✈️", "info");
+
+    saveBtn.innerHTML =
+      "💾 Save Trip";
+
+    showToast(
+      "Welcome to AI Travel Itinerary Planner ✈️",
+      "info"
+    );
   }
 });
 
@@ -424,21 +443,42 @@ function generateItinerary() {
 }
 
 // =========================
-// SAVE TRIP
+// SAVE / UNSAVE TRIP
 // =========================
 function saveTrip() {
 
+  const saveBtn =
+    document.querySelector(
+      'button[onclick="saveTrip()"]'
+    );
+
+  // No plan generated
   if (currentPlan.length === 0) {
     showToast("Generate a trip first", "error");
     return;
   }
 
+  // Already saved → remove it
+  if (localStorage.getItem("travelPlan")) {
+
+    localStorage.removeItem("travelPlan");
+
+    showToast("Saved trip removed 🗑️", "info");
+
+    saveBtn.innerHTML = "💾 Save Trip";
+
+    return;
+  }
+
+  // Save trip
   localStorage.setItem(
     "travelPlan",
     JSON.stringify(currentPlan)
   );
 
   showToast("Trip saved successfully 💾");
+
+  saveBtn.innerHTML = "❌ Remove Saved Trip";
 }
 
 // =========================
