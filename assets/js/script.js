@@ -1779,3 +1779,92 @@ function renderSavedPlan() {
     `;
   });
 }
+
+// =========================
+// CHAT ASSISTANT
+// =========================
+
+function toggleChat() {
+  document.getElementById("chatBox").classList.toggle("hidden");
+}
+
+function sendChat() {
+
+  const input = document.getElementById("chatInput");
+  const msg = input.value.trim();
+
+  if (!msg) return;
+
+  addMessage(msg, "user");
+
+  input.value = "";
+
+  setTimeout(() => {
+    addMessage(getBotReply(msg), "bot");
+  }, 600);
+}
+
+function addMessage(text, type) {
+
+  const box = document.getElementById("chatMessages");
+
+  const div = document.createElement("div");
+
+  div.classList.add("chat-msg");
+  div.classList.add(type === "user" ? "user-msg" : "bot-msg");
+
+  div.innerText = text;
+
+  box.appendChild(div);
+
+  box.scrollTop = box.scrollHeight;
+}
+
+// =========================
+// SIMPLE AI LOGIC
+// =========================
+
+function getBotReply(msg) {
+
+  const text = msg.toLowerCase();
+
+  const destination =
+    document.getElementById("destination")?.value;
+
+  const style =
+    document.getElementById("style")?.value;
+
+  // -------------------------
+  // TRIP CONTEXT AWARE RESPONSES
+  // -------------------------
+
+  if (text.includes("hotel")) {
+    return `I suggest checking ${style || "your selected"} hotels for ${destination || "your destination"} 🏨`;
+  }
+
+  if (text.includes("weather")) {
+    return "Your weather is shown in the forecast panel 🌤️";
+  }
+
+  if (text.includes("food")) {
+    return "Try local food tours or night markets 🍜 — I can include them in your itinerary!";
+  }
+
+  if (text.includes("plan") || text.includes("itinerary")) {
+    return "Your itinerary is already generated — you can refresh it or load a saved trip ✨";
+  }
+
+  if (text.includes("budget")) {
+    return "Your budget breakdown is shown in the chart 📊";
+  }
+
+  if (text.includes("packing")) {
+    return "Each day includes a packing list 🎒 based on weather conditions.";
+  }
+
+  if (destination) {
+    return `For ${destination}, I recommend focusing on ${style || "your travel style"} experiences ✈️`;
+  }
+
+  return "Ask me about hotels, weather, food, packing, or your itinerary ✨";
+}
