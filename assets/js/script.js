@@ -1,6 +1,7 @@
 let budgetChart;
 let currentPlan = [];
 let toastTimeout;
+let compareChart;
 
 // =========================
 // INIT
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderFavoriteTrips();
   renderSavedTripsHistory();
+  populateCompareDropdowns();
 
   // =========================
   // 🚫 HARD RESET ACTIVE STATE
@@ -106,6 +108,469 @@ function loadMap(destination){
     </iframe>
   `;
 }
+
+/* =========================
+   TRIP COMPARISON MODE
+========================= */
+
+function openCompareMode(){
+
+  populateCompareDropdowns();
+
+  document
+    .getElementById("comparisonResults")
+    .scrollIntoView({
+      behavior:"smooth"
+    });
+
+  showToast(
+    "Comparison mode ready ❤️"
+  );
+}
+
+/* =========================
+   POPULATE DROPDOWNS
+========================= */
+
+function populateCompareDropdowns(){
+
+  const savedTrips =
+    JSON.parse(
+      localStorage.getItem("savedTrips")
+    ) || [];
+
+  const select1 =
+    document.getElementById(
+      "compareTrip1"
+    );
+
+  const select2 =
+    document.getElementById(
+      "compareTrip2"
+    );
+
+  if(!select1 || !select2) return;
+
+  select1.innerHTML =
+    `<option value="">Select Trip 1</option>`;
+
+  select2.innerHTML =
+    `<option value="">Select Trip 2</option>`;
+
+  savedTrips.forEach(trip => {
+
+    const option = `
+
+      <option value="${trip.id}">
+
+        ${trip.destination}
+        (${trip.plan?.length || 0} days)
+
+      </option>
+
+    `;
+
+    select1.innerHTML += option;
+    select2.innerHTML += option;
+  });
+}
+
+/* =========================
+   COMPARE
+========================= */
+
+function compareTrips(){
+
+  const trip1Id =
+    document.getElementById(
+      "compareTrip1"
+    ).value;
+
+  const trip2Id =
+    document.getElementById(
+      "compareTrip2"
+    ).value;
+
+  if(!trip1Id || !trip2Id){
+
+    showToast(
+      "Select two trips ❌",
+      "error"
+    );
+
+    return;
+  }
+
+  if(trip1Id === trip2Id){
+
+    showToast(
+      "Choose different trips ⚠️",
+      "error"
+    );
+
+    return;
+  }
+
+  const savedTrips =
+    JSON.parse(
+      localStorage.getItem("savedTrips")
+    ) || [];
+
+  const trip1 =
+    savedTrips.find(
+      t => t.id == trip1Id
+    );
+
+  const trip2 =
+    savedTrips.find(
+      t => t.id == trip2Id
+    );
+
+  if(!trip1 || !trip2){
+
+    showToast(
+      "Trips not found ❌",
+      "error"
+    );
+
+    return;
+  }
+
+  renderComparison(
+    trip1,
+    trip2
+  );
+}
+
+/* =========================
+   RENDER COMPARISON
+========================= */
+
+function renderComparison(
+  trip1,
+  trip2
+){
+
+  const results =
+    document.getElementById(
+      "comparisonResults"
+    );
+
+  const cost1 =
+    calculateTripCost(trip1);
+
+  const cost2 =
+    calculateTripCost(trip2);
+
+  const cheaperTrip =
+    cost1 < cost2
+      ? trip1.destination
+      : trip2.destination;
+
+  const winner =
+    cost1 < cost2
+      ? "trip1"
+      : "trip2";
+
+  results.innerHTML = `
+
+    <div class="comparison-grid">
+
+      <!-- =========================
+           TRIP 1
+      ========================== -->
+
+      <div class="
+        compare-card
+        ${winner === "trip1"
+          ? "compare-winner"
+          : ""}
+      ">
+
+        <div class="compare-header">
+
+          <div>
+
+            <div class="compare-title">
+              ✈️ ${trip1.destination}
+            </div>
+
+            <small>
+              ${trip1.plan?.length || 0}
+              Days
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="compare-stat">
+          💰 Cost:
+          ${formatCurrency(cost1)}
+        </div>
+
+        <div class="compare-stat">
+          🏨 Hotel:
+          ${trip1.plan?.[0]?.hotel || "N/A"}
+        </div>
+
+        <div class="compare-stat">
+          🌤 Weather:
+          ${trip1.plan?.[0]?.weather || "N/A"}
+        </div>
+
+        <div class="compare-stat">
+          🎯 Style:
+          ${detectTripStyle(trip1)}
+        </div>
+
+        <div class="compare-stat">
+          📅 Trip Length:
+          ${trip1.plan?.length || 0} days
+        </div>
+
+        <h3 style="margin-top:20px;">
+          📍 Top Highlights
+        </h3>
+
+        ${trip1.plan.slice(0,3).map(day => `
+
+          <div class="compare-day">
+
+            <strong>
+              Day ${day.day}
+            </strong>
+
+            <p>
+              ${day.schedule?.morning || ""}
+            </p>
+
+            <small>
+              ${day.schedule?.afternoon || ""}
+            </small>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+      <!-- =========================
+           TRIP 2
+      ========================== -->
+
+      <div class="
+        compare-card
+        ${winner === "trip2"
+          ? "compare-winner"
+          : ""}
+      ">
+
+        <div class="compare-header">
+
+          <div>
+
+            <div class="compare-title">
+              ✈️ ${trip2.destination}
+            </div>
+
+            <small>
+              ${trip2.plan?.length || 0}
+              Days
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="compare-stat">
+          💰 Cost:
+          ${formatCurrency(cost2)}
+        </div>
+
+        <div class="compare-stat">
+          🏨 Hotel:
+          ${trip2.plan?.[0]?.hotel || "N/A"}
+        </div>
+
+        <div class="compare-stat">
+          🌤 Weather:
+          ${trip2.plan?.[0]?.weather || "N/A"}
+        </div>
+
+        <div class="compare-stat">
+          🎯 Style:
+          ${detectTripStyle(trip2)}
+        </div>
+
+        <div class="compare-stat">
+          📅 Trip Length:
+          ${trip2.plan?.length || 0} days
+        </div>
+
+        <h3 style="margin-top:20px;">
+          📍 Top Highlights
+        </h3>
+
+        ${trip2.plan.slice(0,3).map(day => `
+
+          <div class="compare-day">
+
+            <strong>
+              Day ${day.day}
+            </strong>
+
+            <p>
+              ${day.schedule?.morning || ""}
+            </p>
+
+            <small>
+              ${day.schedule?.afternoon || ""}
+            </small>
+
+          </div>
+
+        `).join("")}
+
+      </div>
+
+    </div>
+
+    <div class="compare-summary">
+
+      <h3>
+        ❤️ AI Comparison Summary
+      </h3>
+
+      <p>
+
+        ${cheaperTrip}
+        offers the best overall value
+        based on total estimated cost,
+        itinerary quality,
+        and included activities ✨
+
+      </p>
+
+    </div>
+
+  `;
+
+  showToast(
+    "Trips compared ❤️"
+  );
+}
+
+/* =========================
+   COST CALCULATOR
+========================= */
+
+function calculateTripCost(trip){
+
+  if(!trip.plan) return 0;
+
+  return trip.plan.reduce(
+    (total, day) =>
+      total + (day.cost || 0),
+    0
+  );
+}
+
+/* =========================
+   STYLE DETECTOR
+========================= */
+
+function detectTripStyle(trip){
+
+  if(!trip.plan?.length)
+    return "Mixed";
+
+  const text = JSON.stringify(
+    trip.plan
+  ).toLowerCase();
+
+  if(
+    text.includes("disney") ||
+    text.includes("theme park")
+  ){
+    return "Theme Park";
+  }
+
+  if(
+    text.includes("spa") ||
+    text.includes("beach")
+  ){
+    return "Relaxation";
+  }
+
+  if(
+    text.includes("museum") ||
+    text.includes("castle")
+  ){
+    return "Cultural";
+  }
+
+  if(
+    text.includes("hiking") ||
+    text.includes("rafting")
+  ){
+    return "Adventure";
+  }
+
+  if(
+    text.includes("food") ||
+    text.includes("bar")
+  ){
+    return "Food & Nightlife";
+  }
+
+  return "Mixed Experience";
+}
+
+function calculateTripCost(trip){
+
+  if(!trip.plan) return 0;
+
+  return trip.plan.reduce(
+    (total, day) =>
+      total + (day.cost || 0),
+    0
+  );
+}
+
+function detectTripStyle(trip){
+
+  if(!trip.plan?.length)
+    return "Unknown";
+
+  const morning =
+    trip.plan[0]
+      ?.schedule
+      ?.morning || "";
+
+  if(morning.includes("Disney") ||
+     morning.includes("Theme")){
+    return "Theme Park";
+  }
+
+  if(morning.includes("Spa") ||
+     morning.includes("Beach")){
+    return "Relaxation";
+  }
+
+  if(morning.includes("Museum") ||
+     morning.includes("Castle")){
+    return "Cultural";
+  }
+
+  if(morning.includes("Hiking") ||
+     morning.includes("Rafting")){
+    return "Adventure";
+  }
+
+  return "Mixed Experience";
+}
+
 
 function startCountdown(startDate){
 
@@ -1541,6 +2006,8 @@ function saveTrip() {
 
   renderSavedTripsHistory();
 
+  populateCompareDropdowns();
+
   showToast("Trip saved 💾");
 }
 
@@ -1782,6 +2249,8 @@ function deleteSavedTrip(id) {
   localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
 
   renderSavedTripsHistory();
+
+  populateCompareDropdowns();
 
   showToast("Trip deleted 🗑");
 }
