@@ -55,18 +55,15 @@ function showToast(msg, type = "success") {
   clearTimeout(toastTimeout);
 
   toast.innerText = msg;
-  toast.className = "toast show";
+  toast.classList.add("show");
 
-  // reset & apply type
   toast.classList.remove("error", "info", "success");
-
   if (type) toast.classList.add(type);
 
   toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
   }, 2500);
 }
-
 // =========================
 // THEME
 // =========================
@@ -88,35 +85,25 @@ function toggleTheme() {
   );
 }
 
-
 function formatCurrency(amount){
 
-  const currency =
-    document.getElementById("currency").value;
+  const currencyEl = document.getElementById("currency");
+  const currency = currencyEl ? currencyEl.value : "GBP";
 
-  return new Intl.NumberFormat(
-    "en-US",
-    {
-      style:"currency",
-      currency
-    }
-  ).format(amount);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency
+  }).format(amount);
 }
 
-
 function loadMap(destination){
-
   document.getElementById("map").innerHTML = `
-
     <iframe
       width="100%"
       height="350"
       frameborder="0"
-      style="border:0"
-      src="https://www.google.com/maps?q=${destination}&output=embed"
-      allowfullscreen>
+      src="https://www.google.com/maps?q=${encodeURIComponent(destination)}&output=embed">
     </iframe>
-
   `;
 }
 
@@ -162,27 +149,17 @@ function startCountdown(startDate){
 
 function renderBudgetChart(total){
 
-  const ctx =
-    document.getElementById("budgetChart");
+  const ctx = document.getElementById("budgetChart");
+  if (!ctx) return;
 
-  if(budgetChart){
-    budgetChart.destroy();
-  }
+  if (budgetChart) budgetChart.destroy();
 
-  budgetChart = new Chart(ctx,{
-
-    type:"doughnut",
-
-    data:{
-      labels:[
-        "Hotels",
-        "Food",
-        "Activities",
-        "Transport"
-      ],
-
-      datasets:[{
-        data:[
+  budgetChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Hotels", "Food", "Activities", "Transport"],
+      datasets: [{
+        data: [
           total * 0.4,
           total * 0.2,
           total * 0.25,
@@ -949,14 +926,19 @@ function toggleDay(id){
 
 function generateItinerary() {
 
-const destination = document.getElementById("destination").value;
-const days = parseInt(document.getElementById("days").value);
-const budget = document.getElementById("budget").value;
-const style = document.getElementById("style").value;
-const travelers = document.getElementById("travelers").value;
-const startDate = document.getElementById("startDate").value;
+  const destination = document.getElementById("destination").value;
+  const days = parseInt(document.getElementById("days").value);
+  const budget = document.getElementById("budget").value;
+  const style = document.getElementById("style").value;
+  const travelers = document.getElementById("travelers").value;
+  const startDate = document.getElementById("startDate").value;
 
-fetchWeather(destination); 
+  if (!destination || !days) {
+    showToast("Fill all fields", "error");
+    return;
+  }
+
+  fetchWeather(destination);
 
   if (!destination || !days) {
     showToast("Fill all fields", "error");
@@ -1112,7 +1094,7 @@ function saveTrip() {
     id: Date.now(),
     destination,
     createdAt: new Date().toISOString(),
-    plan: structuredClone(currentPlan)
+    plan: JSON.parse(JSON.stringify(currentPlan))
   };
 
   let savedTrips =
