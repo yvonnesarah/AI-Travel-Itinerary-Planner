@@ -492,3 +492,7 @@ body.dark .hour-card{
   opacity:0.8;
   font-size:12px;
 }
+
+#budgetChart {
+  max-height: 300px;
+}
