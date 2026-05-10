@@ -1,29 +1,37 @@
-let budgetChart;
-let currentPlan = [];
-let toastTimeout;
-let compareChart;
+// =========================
+// GLOBAL STATE VARIABLES
+// =========================
+let budgetChart;        // Chart.js instance for budget breakdown
+let currentPlan = [];   // Stores generated itinerary data
+let toastTimeout;       // Controls toast auto-hide timing
+let compareChart;       // (Reserved) comparison chart instance
 
 // =========================
-// INIT
+// INITIALIZATION
+// Runs once when page fully loads
 // =========================
 document.addEventListener("DOMContentLoaded", () => {
 
-  // =========================
-  // THEME RESTORE
-  // =========================
+  // -------------------------
+  // Restore saved theme from localStorage
+  // -------------------------
   if (localStorage.getItem("theme") === "dark") {
     document.body.classList.add("dark");
   }
 
+  // -------------------------
+  // Load persisted UI data
+  // -------------------------
   renderFavoriteTrips();
   renderSavedTripsHistory();
   populateCompareDropdowns();
 
-  // =========================
-  // 🚫 HARD RESET ACTIVE STATE
-  // =========================
+  // -------------------------
+  // Reset runtime state (important for fresh session)
+  // -------------------------
   currentPlan = [];
 
+  // Clear UI sections
   const itinerary = document.getElementById("itinerary");
   const summary = document.getElementById("tripSummary");
   const weather = document.getElementById("weatherBox");
@@ -47,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =========================
-// TOAST 
+// TOAST NOTIFICATIONS SYSTEM
 // =========================
 function showToast(msg, type = "success") {
 
@@ -59,15 +67,17 @@ function showToast(msg, type = "success") {
   toast.innerText = msg;
   toast.classList.add("show");
 
+ // Reset & apply new type styling
   toast.classList.remove("error", "info", "success");
   if (type) toast.classList.add(type);
 
+    // Auto hide toast
   toastTimeout = setTimeout(() => {
     toast.classList.remove("show");
   }, 2500);
 }
 // =========================
-// THEME
+// THEME TOGGLE (LIGHT / DARK)
 // =========================
 function toggleTheme() {
 
@@ -87,6 +97,9 @@ function toggleTheme() {
   );
 }
 
+// =========================
+// CURRENCY FORMATTER
+// =========================
 function formatCurrency(amount){
 
   const currencyEl = document.getElementById("currency");
@@ -98,6 +111,9 @@ function formatCurrency(amount){
   }).format(amount);
 }
 
+// =========================
+// GOOGLE MAP EMBED LOADER
+// =========================
 function loadMap(destination){
   document.getElementById("map").innerHTML = `
     <iframe
@@ -128,10 +144,9 @@ function openCompareMode(){
   );
 }
 
-/* =========================
-   POPULATE DROPDOWNS
-========================= */
-
+// =========================
+// DROPDOWN POPULATION (COMPARE TRIPS)
+// =========================
 function populateCompareDropdowns(){
 
   const savedTrips =
@@ -151,12 +166,14 @@ function populateCompareDropdowns(){
 
   if(!select1 || !select2) return;
 
+   // Reset dropdowns
   select1.innerHTML =
     `<option value="">Select Trip 1</option>`;
 
   select2.innerHTML =
     `<option value="">Select Trip 2</option>`;
 
+  // Populate options
   savedTrips.forEach(trip => {
 
     const option = `
@@ -175,10 +192,9 @@ function populateCompareDropdowns(){
   });
 }
 
-/* =========================
-   COMPARE
-========================= */
-
+// =========================
+// COMPARE TRIPS LOGIC
+// =========================
 function compareTrips(){
 
   const trip1Id =
@@ -242,9 +258,9 @@ function compareTrips(){
   );
 }
 
-/* =========================
-   RENDER COMPARISON
-========================= */
+// =========================
+// RENDER TRIP COMPARISON UI
+// =========================
 
 function renderComparison(
   trip1,
@@ -476,9 +492,9 @@ function calculateTripCost(trip){
   );
 }
 
-/* =========================
-   STYLE DETECTOR
-========================= */
+// =========================
+// STYLE DETECTION ENGINE
+// =========================
 
 function detectTripStyle(trip){
 
@@ -571,7 +587,9 @@ function detectTripStyle(trip){
   return "Mixed Experience";
 }
 
-
+// =========================
+// COUNTDOWN TIMER
+// =========================
 function startCountdown(startDate){
 
   if(!startDate) return;
@@ -612,6 +630,9 @@ function startCountdown(startDate){
   },1000);
 }
 
+// =========================
+// CHART RENDERING (BUDGET)
+// =========================
 function renderBudgetChart(total) {
 
   const ctx = document.getElementById("budgetChart");
@@ -662,6 +683,9 @@ function renderBudgetChart(total) {
   });
 }
 
+// =========================
+// WEATHER ADVICE ENGINE
+// =========================
 function getAISuggestion(style, weather){
 
   if(weather.includes("Rain")){
@@ -925,15 +949,20 @@ function getWeatherTip(weather) {
 
   return "Check conditions before heading out";
 }
+// =========================
+// PACKING LIST GENERATOR
+// =========================
 
 function getPackingList(weather, style) {
 
   let items = [];
 
+  // normalize weather string for easier matching
   const w = weather.toLowerCase();
 
-  // =========================
+ // =========================
   // WEATHER-BASED ITEMS
+  // Adds items depending on weather conditions
   // =========================
 
   if (w.includes("rain")) {
@@ -973,9 +1002,11 @@ function getPackingList(weather, style) {
     items.push("💧 Electrolyte tablets");
   }
 
+
   // =========================
-// THEME PARK ITEMS
-// =========================
+  // THEME PARK SPECIFIC ITEMS
+  // Adds extra items if user selects Theme Park travel style
+  // =========================
 
 if(style === "Theme Park"){
   items.push("🎟 Theme park tickets");
@@ -988,6 +1019,7 @@ if(style === "Theme Park"){
 
   // =========================
   // ALWAYS INCLUDED ESSENTIALS
+  // These are added regardless of weather/style
   // =========================
 
   items.push("📱 Phone + charger");
@@ -1002,16 +1034,16 @@ if(style === "Theme Park"){
   return [...new Set(items)];
 }
 
-/* =========================
-   REAL WEATHER FORECAST SYSTEM
-========================= */
-
+// =========================
+// WEATHER API SYSTEM
+// Fetches live weather + forecast data
+// =========================
 
 async function fetchWeather(destination) {
 
   const weatherBox =
     document.getElementById("weatherBox");
-
+  // loading state UI
   weatherBox.innerHTML = `
     <div class="activity">
       🌍 Loading advanced forecast...
@@ -1024,7 +1056,7 @@ async function fetchWeather(destination) {
       "81c0d22b83ccbe180ccf4acf19f7d978";
 
     // =========================
-    // CURRENT WEATHER
+    // CURRENT WEATHER API CALL
     // =========================
     const currentRes = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${destination}&appid=${apiKey}&units=metric`
@@ -1034,7 +1066,7 @@ async function fetchWeather(destination) {
       await currentRes.json();
 
     // =========================
-    // FORECAST WEATHER
+    // FORECAST WEATHER API CALL
     // =========================
     const forecastRes = await fetch(
       `https://api.openweathermap.org/data/2.5/forecast?q=${destination}&appid=${apiKey}&units=metric`
@@ -1048,7 +1080,8 @@ async function fetchWeather(destination) {
     }
 
     // =========================
-    // GROUP DAYS
+    // GROUP FORECAST BY DAY
+    // Converts 3-hour data into daily buckets
     // =========================
     const groupedDays = {};
 
@@ -1068,7 +1101,8 @@ async function fetchWeather(destination) {
       Object.keys(groupedDays).slice(0, 5);
 
     // =========================
-    // MAIN WEATHER CARD
+    // MAIN WEATHER CARD UI
+    // Displays current conditions
     // =========================
     weatherBox.innerHTML = `
 
@@ -1102,6 +1136,7 @@ async function fetchWeather(destination) {
 
         </div>
 
+        <!-- Weather stats section -->
         <div class="forecast-stats">
 
           <div class="activity">
@@ -1156,6 +1191,7 @@ async function fetchWeather(destination) {
 
         </div>
 
+         <!-- Smart AI advice -->
         <div class="activity">
           💡 ${getSmartWeatherAdvice(currentData)}
         </div>
@@ -1169,13 +1205,14 @@ async function fetchWeather(destination) {
     `;
 
     // =========================
-    // DAILY FORECAST
+    // DAILY FORECAST CARDS
     // =========================
     days.forEach((day, index) => {
 
       const entries =
         groupedDays[day];
 
+      // pick midday forecast for main icon
       const midday =
         entries[Math.floor(entries.length / 2)];
 
@@ -1232,6 +1269,7 @@ async function fetchWeather(destination) {
 
           </div>
 
+          <!-- Detailed stats -->
           <div class="forecast-stats">
 
             <div class="activity">
@@ -1355,6 +1393,9 @@ async function fetchWeather(destination) {
 
   } catch (err) {
 
+    // =========================
+    // ERROR HANDLING
+    // =========================
     console.error(err);
 
     showToast(
@@ -1370,11 +1411,18 @@ async function fetchWeather(destination) {
   }
 }
 
+
+// =========================
+// UTILITY FUNCTIONS
+// =========================
+
+// convert unix timestamp → readable time
 function formatTime(unix) {
   const date = new Date(unix * 1000);
   return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+// convert wind degrees → direction
 function getWindDirection(deg) {
   const directions = [
     "N", "NE", "E", "SE",
@@ -1383,6 +1431,12 @@ function getWindDirection(deg) {
 
   return directions[Math.round(deg / 45) % 8];
 }
+
+
+// =========================
+// SMART WEATHER ADVICE ENGINE
+// Gives contextual travel recommendations
+// =========================
 
 function getSmartWeatherAdvice(data) {
 
@@ -1413,18 +1467,21 @@ function getSmartWeatherAdvice(data) {
 }
 
 /* =========================
-   FAVORITE TRIPS SYSTEM
+   FAVOURITE TRIPS SYSTEM
+   Handles saving, rendering,
+   loading, and deleting favourites
 ========================= */
 function saveFavoriteTrip() {
 
-  // =========================
-  // VALIDATION: no trip
-  // =========================
+/* =========================
+     VALIDATION: ensure trip exists
+  ========================= */
   if (!currentPlan || currentPlan.length === 0) {
     showToast("Generate a trip first ❌", "error");
     return;
   }
 
+  // Get form values
   const destination =
     document.getElementById("destination").value;
 
@@ -1437,20 +1494,23 @@ function saveFavoriteTrip() {
   const style =
     document.getElementById("style").value;
 
-  // =========================
-  // VALIDATION: incomplete form
-  // =========================
+ 
+  /* =========================
+     VALIDATION: ensure form is complete
+  ========================= */
   if (!destination || !days || !budget || !style) {
     showToast("Fill trip details before favouriting ⚠️", "error");
     return;
   }
 
+  // Load existing favourites from localStorage
   let favoriteTrips =
     JSON.parse(localStorage.getItem("favoriteTrips")) || [];
 
-  // =========================
-  // DUPLICATE CHECK
-  // =========================
+   /* =========================
+     DUPLICATE CHECK
+     Prevent saving same trip twice
+  ========================= */
   const exists = favoriteTrips.some(trip =>
     trip.destination === destination &&
     trip.plan?.length === currentPlan.length
@@ -1461,9 +1521,9 @@ function saveFavoriteTrip() {
     return;
   }
 
-  // =========================
-  // SAVE
-  // =========================
+  /* =========================
+     CREATE & SAVE TRIP OBJECT
+  ========================= */
   const favoriteTrip = {
     id: Date.now(),
     destination,
@@ -1476,20 +1536,21 @@ function saveFavoriteTrip() {
 
   favoriteTrips.push(favoriteTrip);
 
+   // Persist to localStorage
   localStorage.setItem(
     "favoriteTrips",
     JSON.stringify(favoriteTrips)
   );
 
+  // Re-render UI
   renderFavoriteTrips();
 
   showToast("Added to favourites ❤️", "success");
 }
 
 /* =========================
-   RENDER FAVOURITES
+   RENDER FAVOURITES LIST
 ========================= */
-
 function renderFavoriteTrips(){
 
   const container =
@@ -1499,11 +1560,16 @@ function renderFavoriteTrips(){
 
   if(!container) return;
 
+    // Load saved favourites
   let favoriteTrips =
     JSON.parse(
       localStorage.getItem("favoriteTrips")
     ) || [];
 
+
+  /* =========================
+     EMPTY STATE
+  ========================= */
   if(!favoriteTrips.length){
 
     container.innerHTML = `
@@ -1518,6 +1584,10 @@ function renderFavoriteTrips(){
   }
 
   container.innerHTML = "";
+
+  /* =========================
+     RENDER EACH SAVED TRIP
+  ========================= */
 
   favoriteTrips.forEach(trip => {
 
@@ -1567,8 +1637,9 @@ function renderFavoriteTrips(){
   });
 }
 
+
 /* =========================
-   DELETE FAVOURITE
+   DELETE FAVOURITE TRIP
 ========================= */
 
 function deleteFavoriteTrip(id){
@@ -1578,11 +1649,15 @@ function deleteFavoriteTrip(id){
       localStorage.getItem("favoriteTrips")
     ) || [];
 
+    
+    // Remove selected trip
   favoriteTrips =
     favoriteTrips.filter(
       trip => trip.id !== id
     );
 
+
+  // Save updated list
   localStorage.setItem(
     "favoriteTrips",
     JSON.stringify(favoriteTrips)
@@ -1594,6 +1669,10 @@ function deleteFavoriteTrip(id){
     "Favourite deleted 🗑"
   );
 }
+
+/* =========================
+   LOAD SAVED FAVOURITE TRIP
+========================= */
 
 async function loadFavoriteTrip(id) {
 
@@ -1609,9 +1688,9 @@ async function loadFavoriteTrip(id) {
 
   showToast("Loading favourite trip... ⏳", "info");
 
-  // =========================
-  // RESTORE FORM
-  // =========================
+  /* =========================
+     RESTORE FORM VALUES
+  ========================= */
   document.getElementById("destination").value = trip.destination || "";
   document.getElementById("days").value = trip.plan?.length || "";
 
@@ -1623,16 +1702,18 @@ async function loadFavoriteTrip(id) {
     return;
   }
 
-  // =========================
-  // REFRESH AI VERSION (NOT OLD DATA)
-  // =========================
+   // Small delay for UX effect
   await new Promise(r => setTimeout(r, 400));
 
+   // Regenerate fresh AI version (not stored snapshot)
   await regenerateFavoriteTrip(destination, days);
 
   showToast("Favourite loaded & refreshed ✨");
 }
 
+/* =========================
+   REGENERATE FAVOURITE TRIP (AI REFRESH)
+========================= */
 async function regenerateFavoriteTrip(destination, days) {
 
   const budget =
@@ -1650,15 +1731,17 @@ async function regenerateFavoriteTrip(destination, days) {
   const pick = arr =>
     arr[Math.floor(Math.random() * arr.length)];
 
+   // Calculate base cost per day
   let baseCost =
     budget === "Budget" ? 80 :
     budget === "Mid-Range" ? 180 : 400;
 
   let totalCost = baseCost * days;
 
-  // =========================
-  // SUMMARY
-  // =========================
+
+  /* =========================
+     UPDATE SUMMARY UI
+  ========================= */
   document.getElementById("tripSummary").innerHTML = `
     <div class="stats-grid">
 
@@ -1691,9 +1774,10 @@ async function regenerateFavoriteTrip(destination, days) {
   itinerary.innerHTML = "";
   currentPlan = [];
 
-  // =========================
-  // BUILD DAYS
-  // =========================
+  
+  /* =========================
+     GENERATE DAILY PLAN
+  ========================= */
   for (let i = 1; i <= days; i++) {
 
     const baseDate =
@@ -1763,7 +1847,7 @@ async function regenerateFavoriteTrip(destination, days) {
   }
 
   // =========================
-  // UPDATE UI FEATURES
+  // UPDATE UI FEATURES EXTRAS
   // =========================
   loadMap(destination);
   renderBudgetChart(totalCost);
@@ -1771,9 +1855,8 @@ async function regenerateFavoriteTrip(destination, days) {
 }
 
 /* =========================
-   COLLAPSE
+   TOGGLE DAY VIEW
 ========================= */
-
 function toggleDay(id){
 
   document
@@ -1782,9 +1865,8 @@ function toggleDay(id){
 }
 
 /* =========================
-   HOURLY TOGGLE
+   TOGGLE HOURLY VIEW
 ========================= */
-
 function toggleHourly(id) {
 
   const el =
@@ -1795,8 +1877,9 @@ function toggleHourly(id) {
   el.classList.toggle("hidden");
 }
 
+
 /* =========================
-   GENERATE ITINERARY
+   GENERATE NEW ITINERARY
 ========================= */
 
 function generateItinerary() {
@@ -1830,20 +1913,30 @@ function generateItinerary() {
 
   let totalCost = baseCost * days;
 
+
+/* =========================
+   TRIP SUMMARY UI
+   - Renders top-level trip stats and destination summary
+========================= */
+
+// Inject trip summary stats + destination card into UI
   document.getElementById("tripSummary").innerHTML = `
 
     <div class="stats-grid">
 
+     <!-- Days counter -->
       <div class="stat-card">
         <h3>${days}</h3>
         <p>Days</p>
       </div>
 
+      <!-- Travelers count -->
       <div class="stat-card">
         <h3>${travelers}</h3>
         <p>Travelers</p>
       </div>
 
+      <!-- Total cost display -->
       <div class="stat-card">
         <h3>${formatCurrency(totalCost)}</h3>
         <p>Total Trip Cost</p>
@@ -1851,6 +1944,7 @@ function generateItinerary() {
 
     </div>
 
+    <!-- Destination summary card -->
     <div class="day-card">
       <h2>${destination}</h2>
       <p>${style} travel plan</p>
@@ -1858,31 +1952,51 @@ function generateItinerary() {
 
   `;
 
+  // Get itinerary container element
   const itinerary = document.getElementById("itinerary");
 
+  // Clear previous itinerary UI
   itinerary.innerHTML = "";
+
+  // Reset current plan in memory
   currentPlan = [];
 
+
+
+/* =========================
+   BUILD DAILY ITINERARY
+   - Generates each day dynamically
+========================= */
   for (let i = 1; i <= days; i++) {
 
+    // Calculate date for each day
     const baseDate = startDate ? new Date(startDate) : new Date();
     const date = new Date(baseDate);
     date.setDate(baseDate.getDate() + i - 1);
 
     // 🌤 WEATHER + TIP
     const weather = "Live Forecast";
+      // Generate tip based on weather
     const tip = getWeatherTip(weather);
 
-    const dayCost = baseCost; // 💰 DAILY PRICE
+  // Base daily cost
+    const dayCost = baseCost; 
 
+    // Build single day object
     const day = {
       day: i,
       date: date.toDateString(),
       weather: weather,
       tip: tip,
       cost: dayCost,
+
+       // Dynamic packing list based on weather & style
       packing: getPackingList(weather, style), 
+
+       // Random hotel selection based on budget
       hotel: pick(hotels[budget]),
+
+       // Daily schedule structure
       schedule: {
         morning: pick(activities[style]),
         midday: pick(foods),
@@ -1891,11 +2005,15 @@ function generateItinerary() {
       }
     };
 
+      // Store in global plan array
     currentPlan.push(day);
 
+      // Append day UI card
     itinerary.innerHTML += `
 
       <div class="day-card ${style === 'Theme Park' ? 'theme-park-card' : ''}">
+
+       <!-- Clickable header to expand/collapse day -->
 
         <div class="day-header"
           onclick="toggleDay('d${i}')">
@@ -1909,68 +2027,90 @@ function generateItinerary() {
 
         </div>
 
+         <!-- Expandable content -->
         <div class="day-content" id="d${i}">
 
+            <!-- Packing list -->
         <div class="activity">🎒 Packing List:</div>
 
         <ul class="packing-list">
         ${day.packing.map(item => `<li>${item}</li>`).join("")}
          </ul>
 
+           <!-- Weather info -->
           <div class="activity">🌤 Weather: ${day.weather}</div>
 
+           <!-- Travel tip -->
           <div class="activity">💡 Tip: ${day.tip}</div>
 
+        <!-- AI suggestion -->
           <div class="activity">
            🤖 AI Suggestion:
            ${getAISuggestion(style, weather)}
         </div>
 
+        <!-- Daily cost -->
           <div class="activity">Day Cost: £${day.cost}</div>
 
+             <!-- Morning activity -->
            <div class="activity">
   ${style === "Theme Park" ? "🎢" : "🌅"}
   ${day.schedule.morning}
 </div>
 
+<!-- Midday activity -->
 <div class="activity">
   🍽️ ${day.schedule.midday}
 </div>
 
+  <!-- Afternoon activity -->
 <div class="activity">
   ${style === "Theme Park" ? "🎠" : "☀️"}
   ${day.schedule.afternoon}
 </div>
 
+<!-- Evening activity -->
 <div class="activity">
   ${style === "Theme Park" ? "🎆" : "🌙"}
   ${day.schedule.evening}
 </div>
 
+    <!-- Hotel -->
           <div class="activity">🏨 ${day.hotel}</div>
       </div>
 
     `;
   }
 
+  // Initialize map for destination
   loadMap(destination);
 
+  // Start countdown timer to trip
 startCountdown(startDate);
 
+// Render budget chart visualization
 renderBudgetChart(totalCost);
 
+// Show success toast
   showToast("Trip generated ✨");
 
+  // Flag in local storage
   localStorage.setItem("hasGeneratedTrip", "true");
 }
 
+/* =========================
+   SAVE TRIP FUNCTION
+   - Saves generated trip to localStorage
+========================= */
 function saveTrip() {
 
+    // Ensure trip exists before saving
   if (!currentPlan || currentPlan.length === 0) {
     showToast("Generate a trip first ❌", "error");
     return;
   }
 
+    // Get current form values
   const destination = document.getElementById("destination").value;
   const days = document.getElementById("days").value;
 
@@ -1979,6 +2119,7 @@ function saveTrip() {
     return;
   }
 
+  // Create structured trip object
   const tripData = {
     id: Date.now(),
     destination,
@@ -1986,10 +2127,11 @@ function saveTrip() {
     plan: JSON.parse(JSON.stringify(currentPlan))
   };
 
+   // Load existing saved trips
   let savedTrips =
     JSON.parse(localStorage.getItem("savedTrips")) || [];
 
-  // prevent duplicates (simple check)
+    // Prevent duplicate saves
   const exists = savedTrips.some(t =>
     t.destination === destination &&
     t.plan?.length === currentPlan.length
@@ -2000,16 +2142,24 @@ function saveTrip() {
     return;
   }
 
+   // Save new trip
   savedTrips.push(tripData);
 
   localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
 
+  // Refresh UI components
   renderSavedTripsHistory();
 
   populateCompareDropdowns();
 
+
   showToast("Trip saved 💾");
 }
+
+/* =========================
+   RENDER SAVED TRIPS
+   - Displays last 5 saved trips
+========================= */
 
 function renderSavedTripsHistory() {
 
@@ -2030,6 +2180,8 @@ function renderSavedTripsHistory() {
 
   const lastFive = savedTrips.slice(-5).reverse();
 
+
+  // Render saved trip cards
   container.innerHTML = lastFive.map(trip => `
     <div class="favorite-trip-card">
 
@@ -2063,6 +2215,10 @@ function renderSavedTripsHistory() {
   `).join("");
 }
 
+
+/* =========================
+   LOAD SAVED TRIP
+========================= */
 async function loadSavedTrip(id) {
 
   let savedTrips =
@@ -2077,13 +2233,10 @@ async function loadSavedTrip(id) {
 
   showToast("Loading trip... ⏳", "info");
 
-  // =========================
-  // RESTORE FORM VALUES
-  // =========================
+  // Restore form values
   document.getElementById("destination").value = trip.destination || "";
   document.getElementById("days").value = trip.plan?.length || "";
 
-  // optional fallback defaults if missing
   const destination = trip.destination;
   const days = trip.plan?.length;
 
@@ -2092,18 +2245,21 @@ async function loadSavedTrip(id) {
     return;
   }
 
-  // =========================
-  // REFRESH (NEW DATA)
-  // =========================
+    // Small delay for UX
   await new Promise(r => setTimeout(r, 400));
 
+  // Regenerate trip from saved data
   await regenerateTripFromSaved(destination, days);
 
   showToast("Trip loaded & refreshed ✨");
 }
 
+// =========================
+// REGENERATE TRIP FROM SAVED DATA
+// =========================
 async function regenerateTripFromSaved(destination, days) {
 
+    // Get user-selected preferences from the UI
   const budget =
     document.getElementById("budget").value;
 
@@ -2116,31 +2272,39 @@ async function regenerateTripFromSaved(destination, days) {
   const startDate =
     document.getElementById("startDate").value;
 
+    // Helper function: pick a random item from an array
   const pick = arr =>
     arr[Math.floor(Math.random() * arr.length)];
 
+   // Convert budget level into base daily cost
   let baseCost =
     budget === "Budget" ? 80 :
     budget === "Mid-Range" ? 180 : 400;
 
+
+  // Total estimated trip cost
   let totalCost = baseCost * days;
 
   // =========================
-  // SUMMARY UI
+  // BUILD SUMMARY UI (TOP SECTION)
   // =========================
+
   document.getElementById("tripSummary").innerHTML = `
     <div class="stats-grid">
 
+      <!-- Number of trip days -->
       <div class="stat-card">
         <h3>${days}</h3>
         <p>Days</p>
       </div>
 
+        <!-- Number of travelers -->
       <div class="stat-card">
         <h3>${travelers}</h3>
         <p>Travelers</p>
       </div>
 
+         <!-- Total estimated cost -->
       <div class="stat-card">
         <h3>${formatCurrency(totalCost)}</h3>
         <p>Total Trip Cost</p>
@@ -2148,43 +2312,61 @@ async function regenerateTripFromSaved(destination, days) {
 
     </div>
 
+       <!-- Destination header -->
     <div class="day-card">
       <h2>${destination}</h2>
       <p>AI refreshed travel plan ✨</p>
     </div>
   `;
 
+    // Get itinerary container
   const itinerary =
     document.getElementById("itinerary");
 
+
+  // Clear previous itinerary UI
   itinerary.innerHTML = "";
+
+    // Reset global plan storage
   currentPlan = [];
 
   // =========================
-  // BUILD DAYS
+  // GENERATE DAILY ITINERARY
   // =========================
   for (let i = 1; i <= days; i++) {
 
+      // Determine base date (start date or today)
     const baseDate =
       startDate ? new Date(startDate) : new Date();
 
+    // Create new date for each day in itinerary
     const date = new Date(baseDate);
     date.setDate(baseDate.getDate() + i - 1);
 
+     // Random weather for the day
     const weather =
       weatherTypes[Math.floor(Math.random() * weatherTypes.length)];
 
+       // Weather-based travel advice
     const tip =
       getWeatherTip(weather);
 
+      // Construct a single day object (stored for export/save)
     const day = {
       day: i,
       date: date.toDateString(),
       weather,
       tip,
       cost: baseCost,
+
+       // Packing list depends on weather + travel style
       packing: getPackingList(weather, style),
+
+       // Random hotel based on budget level
+
       hotel: pick(hotels[budget]),
+
+         // Daily schedule (morning to evening activities)
       schedule: {
         morning: pick(activities[style]),
         midday: pick(foods),
@@ -2193,11 +2375,17 @@ async function regenerateTripFromSaved(destination, days) {
       }
     };
 
+     // Store day in global trip plan
     currentPlan.push(day);
 
+
+    // =========================
+    // RENDER DAY CARD UI
+    // =========================
     itinerary.innerHTML += `
       <div class="day-card">
 
+      <!-- Clickable header to expand/collapse -->
         <div class="day-header"
           onclick="toggleDay('r${i}')">
 
@@ -2210,6 +2398,7 @@ async function regenerateTripFromSaved(destination, days) {
 
         </div>
 
+         <!-- Hidden expandable content -->
         <div class="day-content" id="r${i}">
 
           <div class="activity">🌤 Weather: ${weather}</div>
@@ -2231,40 +2420,56 @@ async function regenerateTripFromSaved(destination, days) {
     `;
   }
 
+    // =========================
+  // POST-GENERATION FEATURES
   // =========================
-  // MAP + CHART + EXTRAS
-  // =========================
+
+   // Render map for destination
   loadMap(destination);
+
+    // Show budget visualization chart
   renderBudgetChart(totalCost);
+
+   // Start countdown to trip start date
   startCountdown(startDate);
 }
 
+// =========================
+// DELETE SAVED TRIP
+// =========================
 function deleteSavedTrip(id) {
 
+   // Load saved trips from localStorage
   let savedTrips =
     JSON.parse(localStorage.getItem("savedTrips")) || [];
 
+     // Remove trip with matching ID
   savedTrips = savedTrips.filter(t => t.id !== id);
 
+   // Save updated list back to storage
   localStorage.setItem("savedTrips", JSON.stringify(savedTrips));
 
+    // Refresh UI components
   renderSavedTripsHistory();
 
   populateCompareDropdowns();
 
+  // Show confirmation message
   showToast("Trip deleted 🗑");
 }
-/* =========================
-   EXPORT JSON
-========================= */
 
+// =========================
+// EXPORT TRIP AS JSON FILE
+// =========================
 function exportJSON(){
 
+    // Prevent export if no plan exists
   if(currentPlan.length === 0){
     showToast("No trip to export ❌", "error");
     return;
   }
 
+   // Convert trip data into downloadable JSON file
   const blob = new Blob(
     [JSON.stringify(currentPlan,null,2)],
     { type:"application/json" }
@@ -2276,21 +2481,30 @@ function exportJSON(){
   a.href = url;
   a.download = "travel-plan.json";
 
+    // Trigger download
   a.click();
 
   showToast("JSON exported 📄");
 }
 
 
+// =========================
+// RENDER SAVED TRIP VIEW
+// =========================
 function renderSavedPlan() {
+
+    // Exit if no saved plan exists
   if (!currentPlan.length) return;
 
   const itinerary = document.getElementById("itinerary");
   itinerary.innerHTML = "";
 
+   // Render each saved day (simplified view)
   currentPlan.forEach((day, i) => {
     itinerary.innerHTML += `
      <div class="day-card">
+
+       <!-- Expandable header -->
         <div class="day-header" onclick="toggleDay('saved${i}')">
           <div>
             <h3>Day ${day.day}</h3>
@@ -2299,6 +2513,7 @@ function renderSavedPlan() {
           <i class="fa-solid fa-chevron-down"></i>
         </div>
 
+         <!-- Minimal saved info -->
         <div class="day-content" id="saved${i}">
           <div class="activity">🌤 Weather: ${day.weather}</div>
           <div class="activity">💡 Tip: ${day.tip}</div>
@@ -2310,13 +2525,17 @@ function renderSavedPlan() {
 }
 
 // =========================
-// CHAT ASSISTANT
+// CHAT ASSISTANT UI TOGGLE
 // =========================
 
 function toggleChat() {
   document.getElementById("chatBox").classList.toggle("hidden");
 }
 
+
+// =========================
+// SEND CHAT MESSAGE
+// =========================
 function sendChat() {
 
   const input = document.getElementById("chatInput");
@@ -2324,15 +2543,20 @@ function sendChat() {
 
   if (!msg) return;
 
+  // Show user message
   addMessage(msg, "user");
 
   input.value = "";
 
+  // Simulated AI delay response
   setTimeout(() => {
     addMessage(getBotReply(msg), "bot");
   }, 600);
 }
 
+// =========================
+// ADD MESSAGE TO CHAT UI
+// =========================
 function addMessage(text, type) {
 
   const box = document.getElementById("chatMessages");
@@ -2346,13 +2570,13 @@ function addMessage(text, type) {
 
   box.appendChild(div);
 
+   // Auto-scroll to latest message
   box.scrollTop = box.scrollHeight;
 }
 
 // =========================
-// SIMPLE AI LOGIC
+// SIMPLE RULE-BASED AI RESPONSES
 // =========================
-
 function getBotReply(msg) {
 
   const text = msg.toLowerCase();
@@ -2395,5 +2619,6 @@ function getBotReply(msg) {
     return `For ${destination}, I recommend focusing on ${style || "your travel style"} experiences ✈️`;
   }
 
+  // Default fallback response
   return "Ask me about hotels, weather, food, packing, or your itinerary ✨";
 }
