@@ -496,3 +496,109 @@ body.dark .hour-card{
 #budgetChart {
   max-height: 300px;
 }
+
+/* =========================
+   CHAT ASSISTANT
+========================= */
+
+#chatToggle {
+  position: fixed;
+  bottom: 25px;
+  left: 25px;
+  background: #6366f1;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.chat-box {
+  position: fixed;
+  bottom: 90px;
+  left: 25px;
+  width: 320px;
+  height: 420px;
+  background: white;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+
+body.dark .chat-box {
+  background: #111827;
+  color: white;
+}
+
+.chat-header {
+  background: #6366f1;
+  color: white;
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.chat-msg {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 85%;
+  font-size: 14px;
+}
+
+.user-msg {
+  background: #6366f1;
+  color: white;
+  margin-left: auto;
+}
+
+.bot-msg {
+  background: #e2e8f0;
+}
+
+body.dark .bot-msg {
+  background: #1f2937;
+}
+
+.chat-input {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  outline: none;
+}
+
+.chat-input button {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
