@@ -428,39 +428,68 @@ function getWeatherTip(weather) {
   return "Check conditions before heading out";
 }
 
-
 function getPackingList(weather) {
 
   let items = [];
 
-  if (weather.includes("Rain")) {
+  const w = weather.toLowerCase();
+
+  // =========================
+  // WEATHER-BASED ITEMS
+  // =========================
+
+  if (w.includes("rain")) {
     items.push("☔ Umbrella");
     items.push("🧥 Waterproof jacket");
     items.push("👟 Waterproof shoes");
+    items.push("🛍 Dry bag / waterproof pouch");
   }
 
-  if (weather.includes("Sunny")) {
+  if (w.includes("sunny") || w.includes("clear")) {
     items.push("🧴 Sunscreen");
     items.push("🕶 Sunglasses");
     items.push("🧢 Hat / Cap");
+    items.push("💧 Water bottle");
   }
 
-  if (weather.includes("Wind")) {
-    items.push("🧥 Light jacket");
+  if (w.includes("wind")) {
+    items.push("🧥 Windproof jacket");
+    items.push("🧣 Light scarf");
   }
 
-  if (weather.includes("Cloud")) {
-    items.push("👕 Comfortable clothing");
+  if (w.includes("cloud")) {
+    items.push("👕 Light layered clothing");
   }
 
-  // always included essentials
-  items.push("📱 Phone charger");
-  items.push("🪪 ID / Passport");
-  items.push("💳 Wallet");
+  if (w.includes("cold") || w.includes("snow")) {
+    items.push("🧥 Warm coat");
+    items.push("🧤 Gloves");
+    items.push("🧣 Scarf");
+    items.push("🧢 Beanie");
+    items.push("🥾 Warm boots");
+  }
 
-  return items;
+  if (w.includes("hot")) {
+    items.push("👕 Breathable clothing");
+    items.push("🧴 Sunscreen (high SPF)");
+    items.push("💧 Electrolyte tablets");
+  }
+
+  // =========================
+  // ALWAYS INCLUDED ESSENTIALS
+  // =========================
+
+  items.push("📱 Phone + charger");
+  items.push("🔋 Power bank");
+  items.push("🪪 Passport / ID");
+  items.push("💳 Wallet / cards");
+  items.push("💊 Basic medication");
+  items.push("🧻 Toiletries kit");
+  items.push("🔌 Travel adapter");
+
+  // remove duplicates (important for cleanliness)
+  return [...new Set(items)];
 }
-
 
 /* =========================
    REAL WEATHER FORECAST SYSTEM
