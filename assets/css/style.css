@@ -380,3 +380,14 @@ body.dark .favorite-trip-meta{
 .toast.success {
   background: #16a34a;
 }
+
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 25px 0 12px;
+  color: #0f172a;
+}
+
+body.dark .section-title {
+  color: #e5e7eb;
+}
