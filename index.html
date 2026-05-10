@@ -2,55 +2,107 @@
 <html lang="en">
 
 <head>
+  <!-- Character encoding -->
   <meta charset="UTF-8"/>
+
+  <!-- Makes the website responsive on mobile devices -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Browser tab title -->
   <title>AI Travel Itinerary Planner</title>
 
+  <!-- Main custom stylesheet -->
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <!-- Font Awesome icons library -->
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+  <!-- Chart.js library for budget chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
+<!-- Main page container -->
 <div class="container">
 
+  <!-- Hero / Header Section -->
   <div class="hero">
+
+    <!-- Small badge at top -->
     <div class="hero-badge">
       <i class="fa-solid fa-location-dot"></i>
       Smart Travel Assistant
     </div>
 
+    <!-- Main heading -->
     <h1>AI Travel Itinerary Planner</h1>
-    <p>Build personalized trips with hotels, food, weather, and daily cost tracking.</p>
 
+    <!-- Short description -->
+    <p>
+      Build personalized trips with hotels, food, weather,
+      and daily cost tracking.
+    </p>
+
+    <!-- Action buttons -->
     <div class="button-group hero-buttons">
-      <button class="btn secondary-btn" onclick="toggleTheme()">🌙 Theme</button>
-      <button class="btn secondary-btn" onclick="exportJSON()">📄 Export</button>
-      <button class="btn primary-btn" onclick="saveTrip()">💾 Save Trip</button>
-      <button class="btn primary-btn" onclick="saveFavoriteTrip()">❤️ Favourite Trip</button>
-      <button class="btn secondary-btn" onclick="openCompareMode()">❤️ Compare Trips</button>
+
+      <!-- Toggle dark/light theme -->
+      <button class="btn secondary-btn" onclick="toggleTheme()">
+        🌙 Theme
+      </button>
+
+      <!-- Export trip data as JSON -->
+      <button class="btn secondary-btn" onclick="exportJSON()">
+        📄 Export
+      </button>
+
+      <!-- Save current trip -->
+      <button class="btn primary-btn" onclick="saveTrip()">
+        💾 Save Trip
+      </button>
+
+      <!-- Add trip to favourites -->
+      <button class="btn primary-btn" onclick="saveFavoriteTrip()">
+        ❤️ Favourite Trip
+      </button>
+
+      <!-- Open comparison mode -->
+      <button class="btn secondary-btn" onclick="openCompareMode()">
+        ❤️ Compare Trips
+      </button>
     </div>
   </div>
 
+  <!-- Main planner card -->
   <div class="planner-card">
 
+    <!-- =========================
+         FORM SECTION
+    ========================== -->
     <div class="form-section">
+
+      <!-- Destination input -->
       <input type="text" id="destination" placeholder="Destination">
 
+      <!-- Start date and number of days -->
       <div class="grid-2">
         <input type="date" id="startDate">
         <input type="number" id="days" placeholder="Days">
       </div>
 
+      <!-- Budget and travel style -->
       <div class="grid-2">
+
+        <!-- Budget selector -->
         <select id="budget">
           <option>Budget</option>
           <option>Mid-Range</option>
           <option>Luxury</option>
         </select>
 
+        <!-- Trip style selector -->
         <select id="style">
           <option>Adventure</option>
           <option>Relaxation</option>
@@ -61,59 +113,92 @@
         </select>
       </div>
 
-      <input type="number" id="travelers" value="2" min="1" placeholder="Travelers">
+      <!-- Number of travelers -->
+      <input type="number"
+             id="travelers"
+             value="2"
+             min="1"
+             placeholder="Travelers">
 
-      <!-- FIXED: currency added -->
+      <!-- Currency selector -->
       <select id="currency">
         <option value="GBP">GBP (£)</option>
         <option value="USD">USD ($)</option>
         <option value="EUR">EUR (€)</option>
       </select>
 
+      <!-- Generate itinerary button -->
       <button class="btn primary-btn" onclick="generateItinerary()">
         ✨ Generate Itinerary
       </button>
     </div>
 
+    <!-- =========================
+         RESULTS SECTION
+    ========================== -->
     <div class="result-section">
 
+      <!-- Weather information -->
       <div id="weatherBox"></div>
+
+      <!-- Trip summary -->
       <div id="tripSummary"></div>
+
+      <!-- Countdown until trip starts -->
       <div id="countdown"></div>
+
+      <!-- Map display -->
       <div id="map"></div>
+
+      <!-- Budget chart -->
       <canvas id="budgetChart"></canvas>
 
+      <!-- Generated itinerary -->
       <div id="itinerary"></div>
 
+      <!-- =========================
+           SAVED TRIPS
+      ========================== -->
       <h2 class="section-title">💾 Saved Trips</h2>
+
+      <!-- Saved trip history -->
       <div id="savedTripsHistory"></div>
 
+      <!-- =========================
+           FAVOURITE TRIPS
+      ========================== -->
       <h2 class="section-title">❤️ Favourite Trips</h2>
+
+      <!-- Favourite trips list -->
       <div id="favoriteTripsList"></div>
 
       <!-- =========================
-     TRIP COMPARISON MODE
-========================= -->
+           TRIP COMPARISON MODE
+      ========================== -->
+      <h2 class="section-title">❤️ Trip Comparison Mode</h2>
 
-<h2 class="section-title">❤️ Trip Comparison Mode</h2>
+      <!-- Comparison controls -->
+      <div class="comparison-controls">
 
-<div class="comparison-controls">
+        <!-- Select first trip -->
+        <select id="compareTrip1">
+          <option value="">Select Trip 1</option>
+        </select>
 
-  <select id="compareTrip1">
-    <option value="">Select Trip 1</option>
-  </select>
+        <!-- Select second trip -->
+        <select id="compareTrip2">
+          <option value="">Select Trip 2</option>
+        </select>
 
-  <select id="compareTrip2">
-    <option value="">Select Trip 2</option>
-  </select>
+        <!-- Compare button -->
+        <button class="btn primary-btn" onclick="compareTrips()">
+          ⚡ Compare
+        </button>
 
-  <button class="btn primary-btn" onclick="compareTrips()">
-    ⚡ Compare
-  </button>
+      </div>
 
-</div>
-
-<div id="comparisonResults"></div>
+      <!-- Comparison output -->
+      <div id="comparisonResults"></div>
 
     </div>
 
@@ -125,29 +210,45 @@
      AI TRAVEL CHAT ASSISTANT
 ========================= -->
 
+<!-- Floating chat toggle button -->
 <div id="chatToggle" onclick="toggleChat()">
   🤖 AI Chat
 </div>
 
+<!-- Chat box container -->
 <div id="chatBox" class="chat-box hidden">
 
+  <!-- Chat header -->
   <div class="chat-header">
+
+    <!-- Chat title -->
     <span>AI Travel Assistant</span>
+
+    <!-- Close chat button -->
     <button onclick="toggleChat()">✖</button>
   </div>
 
+  <!-- Chat messages area -->
   <div id="chatMessages" class="chat-messages"></div>
 
+  <!-- Chat input area -->
   <div class="chat-input">
-    <input type="text" id="chatInput" placeholder="Ask about your trip...">
+
+    <!-- User message input -->
+    <input type="text"
+           id="chatInput"
+           placeholder="Ask about your trip...">
+
+    <!-- Send message button -->
     <button onclick="sendChat()">➤</button>
   </div>
 
 </div>
 
-
+<!-- Toast notification container -->
 <div id="toast" class="toast"></div>
 
+<!-- Main JavaScript file -->
 <script src="assets/js/script.js"></script>
 
 </body>

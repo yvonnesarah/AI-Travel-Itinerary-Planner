@@ -1,31 +1,35 @@
 /* =========================
    RESET
+   Removes default browser spacing
+   and applies global styles
 ========================= */
 
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:"Segoe UI",sans-serif;
+  margin:0; /* Removes default margin */
+  padding:0; /* Removes default padding */
+  box-sizing:border-box; /* Includes padding/border inside width & height */
+  font-family:"Segoe UI",sans-serif; /* Sets default font */
 }
 
 /* =========================
    BODY
+   Main page background + text colors
 ========================= */
 
 body{
-  min-height:100vh;
+  min-height:100vh; /* Makes body full viewport height */
 
   background:
   linear-gradient(
     135deg,
     #f5f7fb,
     #eef2ff
-  );
+  ); /* Light gradient background */
 
-  color:#0f172a;
+  color:#0f172a; /* Default text color */
 }
 
+/* Dark mode body styling */
 body.dark{
   background:#020617;
   color:#e5e7eb;
@@ -33,53 +37,59 @@ body.dark{
 
 /* =========================
    LAYOUT
+   Main page wrapper
 ========================= */
 
 .container{
-  max-width:1350px;
-  margin:auto;
-  padding:40px 20px;
+  max-width:1350px; /* Limits content width */
+  margin:auto; /* Centers container */
+  padding:40px 20px; /* Inner spacing */
 }
 
 /* =========================
    HERO
+   Top intro section
 ========================= */
 
 .hero{
-  text-align:center;
+  text-align:center; /* Centers content */
   margin-bottom:35px;
 }
 
 .hero h1{
-  font-size:54px;
+  font-size:54px; /* Large heading */
   margin-bottom:12px;
 }
 
 .hero p{
-  max-width:700px;
+  max-width:700px; /* Limits paragraph width */
   margin:auto;
-  line-height:1.7;
+  line-height:1.7; /* Improves readability */
   color:#475569;
 }
 
+/* Dark mode paragraph */
 body.dark .hero p{
   color:#cbd5e1;
 }
 
+/* Small badge/pill element */
 .hero-badge{
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:10px; /* Space between icon/text */
   padding:10px 18px;
-  border-radius:999px;
+  border-radius:999px; /* Fully rounded */
   background:white;
   margin-bottom:20px;
 }
 
+/* Dark mode badge */
 body.dark .hero-badge{
   background:#1f2937;
 }
 
+/* Hero buttons container */
 .hero-buttons{
   margin-top:20px;
   flex-wrap:wrap;
@@ -87,13 +97,14 @@ body.dark .hero-badge{
 
 /* =========================
    CARD
+   Main planner card container
 ========================= */
 
 .planner-card{
-  backdrop-filter:blur(20px);
+  backdrop-filter:blur(20px); /* Glassmorphism blur */
 
   background:
-  rgba(255,255,255,0.75);
+  rgba(255,255,255,0.75); /* Transparent white */
 
   border-radius:24px;
 
@@ -102,7 +113,7 @@ body.dark .hero-badge{
   display:grid;
 
   grid-template-columns:
-  420px 1fr;
+  420px 1fr; /* Sidebar + content */
 
   gap:30px;
 
@@ -111,6 +122,7 @@ body.dark .hero-badge{
   rgba(0,0,0,0.08);
 }
 
+/* Dark mode planner card */
 body.dark .planner-card{
   background:
   rgba(17,24,39,0.85);
@@ -118,16 +130,18 @@ body.dark .planner-card{
 
 /* =========================
    FORM
+   Form section layout
 ========================= */
 
 .form-section{
   display:flex;
-  flex-direction:column;
+  flex-direction:column; /* Vertical stacking */
   gap:18px;
 }
 
 /* =========================
    INPUTS
+   Form controls styling
 ========================= */
 
 input,
@@ -138,6 +152,7 @@ select{
   font-size:14px;
 }
 
+/* Dark mode inputs */
 body.dark input,
 body.dark select{
   background:#0f172a;
@@ -145,6 +160,7 @@ body.dark select{
   color:white;
 }
 
+/* Two-column grid layout */
 .grid-2{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -153,6 +169,7 @@ body.dark select{
 
 /* =========================
    BUTTONS
+   Reusable button styles
 ========================= */
 
 .button-group{
@@ -161,28 +178,32 @@ body.dark select{
 }
 
 .btn{
-  flex:1;
+  flex:1; /* Equal width buttons */
   border:none;
   border-radius:12px;
   padding:14px;
   cursor:pointer;
   font-weight:600;
-  transition:0.25s ease;
+  transition:0.25s ease; /* Smooth hover animation */
 }
 
+/* Lift effect on hover */
 .btn:hover{
   transform:translateY(-2px);
 }
 
+/* Primary button */
 .primary-btn{
   background:#6366f1;
   color:white;
 }
 
+/* Secondary button */
 .secondary-btn{
   background:#e2e8f0;
 }
 
+/* Dark mode secondary button */
 body.dark .secondary-btn{
   background:#1f2937;
   color:white;
@@ -190,22 +211,25 @@ body.dark .secondary-btn{
 
 /* =========================
    RESULT
+   Output/result display area
 ========================= */
 
 .result-section{
   background:#f8fafc;
   border-radius:20px;
   padding:24px;
-  max-height:900px;
-  overflow-y:auto;
+  max-height:900px; /* Prevents excessive height */
+  overflow-y:auto; /* Enables scrolling */
 }
 
+/* Dark mode results */
 body.dark .result-section{
   background:#0f172a;
 }
 
 /* =========================
    COUNTDOWN
+   Countdown timer display
 ========================= */
 
 #countdown{
@@ -219,7 +243,8 @@ body.dark .result-section{
 }
 
 /* =========================
-   MAP 
+   MAP
+   Embedded map container
 ========================= */
 
 #map{
@@ -230,6 +255,7 @@ body.dark .result-section{
 
 /* =========================
    STATS
+   Statistics cards layout
 ========================= */
 
 .stats-grid{
@@ -239,6 +265,7 @@ body.dark .result-section{
   margin-bottom:20px;
 }
 
+/* Individual stat card */
 .stat-card{
   background:white;
   padding:18px;
@@ -246,12 +273,14 @@ body.dark .result-section{
   text-align:center;
 }
 
+/* Dark mode stat cards */
 body.dark .stat-card{
   background:#111827;
 }
 
 /* =========================
    DAY CARD
+   Daily itinerary cards
 ========================= */
 
 .day-card{
@@ -261,26 +290,31 @@ body.dark .stat-card{
   margin-bottom:18px;
 }
 
+/* Dark mode day card */
 body.dark .day-card{
   background:#111827;
 }
 
+/* Day card header */
 .day-header{
   display:flex;
   justify-content:space-between;
-  cursor:pointer;
+  cursor:pointer; /* Indicates clickable */
 }
 
+/* Expandable content area */
 .day-content{
   margin-top:16px;
 }
 
+/* Utility class to hide elements */
 .hidden{
   display:none;
 }
 
 /* =========================
    ACTIVITIES
+   Activity item styling
 ========================= */
 
 .activity{
@@ -290,18 +324,21 @@ body.dark .day-card{
   margin-top:10px;
 }
 
+/* Dark mode activities */
 body.dark .activity{
   background:#1e293b;
 }
 
 /* =========================
    FAVOURITES
+   Saved trips section
 ========================= */
 
 #favoriteTripsContainer{
   margin-top:20px;
 }
 
+/* Favorite trip card */
 .favorite-trip-card{
   background:white;
   padding:20px;
@@ -310,27 +347,32 @@ body.dark .activity{
   border:1px solid #e2e8f0;
 }
 
+/* Dark mode favorite card */
 body.dark .favorite-trip-card{
   background:#111827;
   border-color:#1f2937;
 }
 
+/* Favorite trip title */
 .favorite-trip-title{
   font-size:20px;
   font-weight:700;
   margin-bottom:10px;
 }
 
+/* Trip metadata text */
 .favorite-trip-meta{
   color:#64748b;
   font-size:14px;
   margin-bottom:6px;
 }
 
+/* Dark mode metadata */
 body.dark .favorite-trip-meta{
   color:#cbd5e1;
 }
 
+/* Favorite card action buttons */
 .favorite-trip-actions{
   display:flex;
   gap:10px;
@@ -339,6 +381,7 @@ body.dark .favorite-trip-meta{
 
 /* =========================
    TOAST
+   Notification popup system
 ========================= */
 
 .toast{
@@ -349,38 +392,45 @@ body.dark .favorite-trip-meta{
   color:white;
   padding:14px 22px;
   border-radius:12px;
-  opacity:0;
+  opacity:0; /* Hidden initially */
   transform:translateY(20px);
   transition:0.3s ease;
 }
 
+/* Visible toast state */
 .toast.show{
   opacity:1;
   transform:translateY(0);
 }
 
+/* Error toast */
 .toast.error{
   background:#e53935;
 }
 
+/* Info toast */
 .toast.info{
   background:#1976d2;
 }
 
+/* Packing list styles */
 .packing-list {
   margin-top: 10px;
   padding-left: 20px;
 }
 
+/* Packing list items */
 .packing-list li {
   margin: 6px 0;
   font-size: 14px;
 }
 
+/* Success toast */
 .toast.success {
   background: #16a34a;
 }
 
+/* Section titles */
 .section-title {
   font-size: 22px;
   font-weight: 700;
@@ -388,11 +438,14 @@ body.dark .favorite-trip-meta{
   color: #0f172a;
 }
 
+/* Dark mode section title */
 body.dark .section-title {
   color: #e5e7eb;
 }
+
 /* =========================
    FORECAST SYSTEM
+   Weather forecast cards
 ========================= */
 
 .forecast-main-card,
@@ -403,11 +456,13 @@ body.dark .section-title {
   margin-bottom:20px;
 }
 
+/* Dark mode forecast cards */
 body.dark .forecast-main-card,
 body.dark .forecast-card{
   background:#111827;
 }
 
+/* Forecast top layout */
 .forecast-main-top,
 .forecast-top{
   display:flex;
@@ -416,27 +471,32 @@ body.dark .forecast-card{
   margin-bottom:18px;
 }
 
+/* Forecast icon alignment */
 .forecast-main-icon,
 .forecast-icon{
   text-align:center;
 }
 
+/* Weather icons */
 .forecast-main-icon img,
 .forecast-icon img{
   width:80px;
   height:80px;
 }
 
+/* Weather condition text */
 .weather-condition{
   margin-top:6px;
   color:#64748b;
   text-transform:capitalize;
 }
 
+/* Dark mode weather condition */
 body.dark .weather-condition{
   color:#cbd5e1;
 }
 
+/* Forecast statistics grid */
 .forecast-stats{
   display:grid;
   grid-template-columns:
@@ -452,11 +512,12 @@ body.dark .weather-condition{
 .hourly-container{
   display:flex;
   gap:12px;
-  overflow-x:auto;
+  overflow-x:auto; /* Horizontal scrolling */
   margin-top:18px;
   padding-bottom:10px;
 }
 
+/* Individual hourly card */
 .hour-card{
   min-width:110px;
   background:#eef2ff;
@@ -470,35 +531,42 @@ body.dark .weather-condition{
   gap:6px;
 }
 
+/* Dark mode hourly card */
 body.dark .hour-card{
   background:#1e293b;
 }
 
+/* Hour weather icon */
 .hour-card img{
   width:42px;
   height:42px;
 }
 
+/* Hour text */
 .hour-time{
   font-weight:700;
 }
 
+/* Temperature display */
 .hour-temp{
   font-size:18px;
   font-weight:700;
 }
 
+/* Additional weather details */
 .hour-card small{
   opacity:0.8;
   font-size:12px;
 }
 
+/* Budget chart sizing */
 #budgetChart {
   max-height: 300px;
 }
 
 /* =========================
    CHAT ASSISTANT
+   Floating AI chat UI
 ========================= */
 
 #chatToggle {
@@ -515,6 +583,7 @@ body.dark .hour-card{
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
+/* Chat window */
 .chat-box {
   position: fixed;
   bottom: 90px;
@@ -530,11 +599,13 @@ body.dark .hour-card{
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
 }
 
+/* Dark mode chat */
 body.dark .chat-box {
   background: #111827;
   color: white;
 }
 
+/* Chat header */
 .chat-header {
   background: #6366f1;
   color: white;
@@ -544,6 +615,7 @@ body.dark .chat-box {
   font-weight: 600;
 }
 
+/* Chat close button */
 .chat-header button {
   background: transparent;
   border: none;
@@ -551,12 +623,14 @@ body.dark .chat-box {
   cursor: pointer;
 }
 
+/* Messages area */
 .chat-messages {
   flex: 1;
   padding: 10px;
   overflow-y: auto;
 }
 
+/* Chat bubble */
 .chat-msg {
   margin: 8px 0;
   padding: 10px;
@@ -565,25 +639,30 @@ body.dark .chat-box {
   font-size: 14px;
 }
 
+/* User message */
 .user-msg {
   background: #6366f1;
   color: white;
   margin-left: auto;
 }
 
+/* Bot message */
 .bot-msg {
   background: #e2e8f0;
 }
 
+/* Dark mode bot message */
 body.dark .bot-msg {
   background: #1f2937;
 }
 
+/* Chat input area */
 .chat-input {
   display: flex;
   border-top: 1px solid #ddd;
 }
 
+/* Chat text input */
 .chat-input input {
   flex: 1;
   border: none;
@@ -591,6 +670,7 @@ body.dark .bot-msg {
   outline: none;
 }
 
+/* Send button */
 .chat-input button {
   background: #6366f1;
   color: white;
@@ -599,10 +679,12 @@ body.dark .bot-msg {
   cursor: pointer;
 }
 
+/* Utility hidden class */
 .hidden {
   display: none;
 }
 
+/* Theme park special card */
 .theme-park-card {
   border: 2px solid #f59e0b;
   background: linear-gradient(
@@ -612,6 +694,7 @@ body.dark .bot-msg {
   );
 }
 
+/* Dark mode theme park card */
 body.dark .theme-park-card {
   background: #1e1b04;
   border-color: #fbbf24;
@@ -628,6 +711,7 @@ body.dark .theme-park-card {
   margin-bottom:20px;
 }
 
+/* Comparison cards grid */
 .comparison-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -635,6 +719,7 @@ body.dark .theme-park-card {
   margin-top:20px;
 }
 
+/* Individual comparison card */
 .compare-card{
   background:white;
   border-radius:22px;
@@ -644,11 +729,13 @@ body.dark .theme-park-card {
     0 10px 30px rgba(0,0,0,0.05);
 }
 
+/* Dark mode compare card */
 body.dark .compare-card{
   background:#111827;
   border-color:#1f2937;
 }
 
+/* Compare card header */
 .compare-header{
   display:flex;
   justify-content:space-between;
@@ -656,11 +743,13 @@ body.dark .compare-card{
   margin-bottom:18px;
 }
 
+/* Compare title */
 .compare-title{
   font-size:24px;
   font-weight:700;
 }
 
+/* Statistic box */
 .compare-stat{
   background:#eef2ff;
   border-radius:14px;
@@ -668,15 +757,18 @@ body.dark .compare-card{
   margin-top:12px;
 }
 
+/* Dark mode stat */
 body.dark .compare-stat{
   background:#1e293b;
 }
 
+/* Highlight winning trip */
 .compare-winner{
   border:2px solid #22c55e;
   position:relative;
 }
 
+/* Winner badge */
 .compare-winner::after{
   content:"🏆 Best Value";
   position:absolute;
@@ -690,6 +782,7 @@ body.dark .compare-stat{
   font-weight:700;
 }
 
+/* Comparison day section */
 .compare-day{
   margin-top:14px;
   padding:12px;
@@ -697,16 +790,24 @@ body.dark .compare-stat{
   background:#f8fafc;
 }
 
+/* Dark mode compare day */
 body.dark .compare-day{
   background:#0f172a;
 }
 
+/* =========================
+   RESPONSIVE DESIGN
+   Mobile adjustments
+========================= */
+
 @media(max-width:900px){
 
+  /* Stack comparison cards vertically */
   .comparison-grid{
     grid-template-columns:1fr;
   }
 
+  /* Stack controls vertically */
   .comparison-controls{
     grid-template-columns:1fr;
   }
