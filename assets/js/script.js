@@ -376,19 +376,6 @@ const transport = [
   "Boat Taxi Experience"
 ];
 
-
-/* =========================
-   WEATHER SYSTEM (SIMULATED DAILY)
-========================= */
-
-const weatherTypes = [
-  "Sunny ☀️",
-  "Cloudy ☁️",
-  "Rainy 🌧️",
-  "Windy 🌬️",
-  "Partly Cloudy ⛅"
-];
-
 /* =========================
    WEATHER TIP ENGINE
 ========================= */
@@ -447,65 +434,372 @@ function getPackingList(weather) {
   return items;
 }
 
+
 /* =========================
-   WEATHER
+   REAL WEATHER FORECAST SYSTEM
 ========================= */
 
-async function fetchWeather(destination){
 
-    document.getElementById("weatherBox").innerHTML =
-  "<div class='activity'>🌍 Loading weather...</div>";
+async function fetchWeather(destination) {
 
-  try{
+  const weatherBox =
+    document.getElementById("weatherBox");
+
+  weatherBox.innerHTML = `
+    <div class="activity">
+      🌍 Loading advanced forecast...
+    </div>
+  `;
+
+  try {
 
     const apiKey =
       "81c0d22b83ccbe180ccf4acf19f7d978";
 
-    const res = await fetch(
+    // =========================
+    // CURRENT WEATHER
+    // =========================
+    const currentRes = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${destination}&appid=${apiKey}&units=metric`
     );
 
-   const data = await res.json();
+    const currentData =
+      await currentRes.json();
 
-if (!data.main) {
-  throw new Error("Invalid weather response");
-}
+    // =========================
+    // FORECAST WEATHER
+    // =========================
+    const forecastRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${destination}&appid=${apiKey}&units=metric`
+    );
 
-   document.getElementById("weatherBox").innerHTML = `
+    const forecastData =
+      await forecastRes.json();
 
-  <div class="day-card">
+    if (!forecastData.list) {
+      throw new Error("Forecast unavailable");
+    }
 
-    <h3>🌍 Weather in ${data.name}</h3>
+    // =========================
+    // GROUP DAYS
+    // =========================
+    const groupedDays = {};
 
-    <div class="activity">🌡 Temperature: ${data.main.temp}°C (Feels like ${data.main.feels_like}°C)</div>
+    forecastData.list.forEach(item => {
 
-    <div class="activity">📉 Min: ${data.main.temp_min}°C | 📈 Max: ${data.main.temp_max}°C</div>
+      const date =
+        item.dt_txt.split(" ")[0];
 
-    <div class="activity">☁️ Condition: ${data.weather[0].description}</div>
+      if (!groupedDays[date]) {
+        groupedDays[date] = [];
+      }
 
-    <div class="activity">💧 Humidity: ${data.main.humidity}%</div>
+      groupedDays[date].push(item);
+    });
 
-    <div class="activity">🌬 Wind: ${data.wind.speed} m/s (${getWindDirection(data.wind.deg)})</div>
+    const days =
+      Object.keys(groupedDays).slice(0, 5);
 
-    <div class="activity">🔵 Pressure: ${data.main.pressure} hPa</div>
+    // =========================
+    // MAIN WEATHER CARD
+    // =========================
+    weatherBox.innerHTML = `
 
-    <div class="activity">👀 Visibility: ${(data.visibility / 1000).toFixed(1)} km</div>
+      <div class="forecast-main-card">
 
-    <div class="activity">🌅 Sunrise: ${formatTime(data.sys.sunrise)}</div>
+        <div class="forecast-main-top">
 
-    <div class="activity">🌇 Sunset: ${formatTime(data.sys.sunset)}</div>
+          <div>
 
-    <div class="activity">🌧 Rain chance: ${data.rain?.["1h"] ? data.rain["1h"] + " mm (last hour)" : "No rain detected"}</div>
+            <h2>
+              🌍 ${currentData.name}
+            </h2>
 
-    <div class="activity">💡 Travel Tip: ${getSmartWeatherAdvice(data)}</div>
+            <p class="weather-condition">
+              ${currentData.weather[0].description}
+            </p>
 
-  </div>
+          </div>
 
-`;
+          <div class="forecast-main-icon">
 
-} catch (err) {
-  console.error(err);
-  showToast("Weather unavailable ❌", "error");
+            <img
+              src="https://openweathermap.org/img/wn/${currentData.weather[0].icon}@2x.png"
+            >
+
+            <h1>
+              ${Math.round(currentData.main.temp)}°C
+            </h1>
+
+          </div>
+
+        </div>
+
+        <div class="forecast-stats">
+
+          <div class="activity">
+            🌡 Current:
+            ${Math.round(currentData.main.temp)}°C
+          </div>
+
+          <div class="activity">
+            🤔 Feels Like:
+            ${Math.round(currentData.main.feels_like)}°C
+          </div>
+
+          <div class="activity">
+            💧 Humidity:
+            ${currentData.main.humidity}%
+          </div>
+
+          <div class="activity">
+            🔵 Pressure:
+            ${currentData.main.pressure} hPa
+          </div>
+
+          <div class="activity">
+            🌬 Wind Speed:
+            ${currentData.wind.speed} m/s
+          </div>
+
+          <div class="activity">
+            🧭 Wind Direction:
+            ${getWindDirection(currentData.wind.deg)}
+          </div>
+
+          <div class="activity">
+            👀 Visibility:
+            ${(currentData.visibility / 1000).toFixed(1)} km
+          </div>
+
+          <div class="activity">
+            ☁️ Cloudiness:
+            ${currentData.clouds.all}%
+          </div>
+
+          <div class="activity">
+            🌅 Sunrise:
+            ${formatTime(currentData.sys.sunrise)}
+          </div>
+
+          <div class="activity">
+            🌇 Sunset:
+            ${formatTime(currentData.sys.sunset)}
+          </div>
+
+        </div>
+
+        <div class="activity">
+          💡 ${getSmartWeatherAdvice(currentData)}
+        </div>
+
+      </div>
+
+      <h2 class="section-title">
+        📅 5-Day Forecast
+      </h2>
+
+    `;
+
+    // =========================
+    // DAILY FORECAST
+    // =========================
+    days.forEach((day, index) => {
+
+      const entries =
+        groupedDays[day];
+
+      const midday =
+        entries[Math.floor(entries.length / 2)];
+
+      const icon =
+        midday.weather[0].icon;
+
+      const condition =
+        midday.weather[0].description;
+
+      const temp =
+        Math.round(midday.main.temp);
+
+      const min =
+        Math.round(
+          Math.min(...entries.map(
+            e => e.main.temp_min
+          ))
+        );
+
+      const max =
+        Math.round(
+          Math.max(...entries.map(
+            e => e.main.temp_max
+          ))
+        );
+
+      weatherBox.innerHTML += `
+
+        <div class="forecast-card">
+
+          <div class="forecast-top">
+
+            <div>
+
+              <h3>
+                ${new Date(day).toDateString()}
+              </h3>
+
+              <p class="weather-condition">
+                ${condition}
+              </p>
+
+            </div>
+
+            <div class="forecast-icon">
+
+              <img
+                src="https://openweathermap.org/img/wn/${icon}@2x.png"
+              >
+
+              <h2>${temp}°C</h2>
+
+            </div>
+
+          </div>
+
+          <div class="forecast-stats">
+
+            <div class="activity">
+              🌡 Current:
+              ${temp}°C
+            </div>
+
+            <div class="activity">
+              🤔 Feels Like:
+              ${Math.round(midday.main.feels_like)}°C
+            </div>
+
+            <div class="activity">
+              📈 Max:
+              ${max}°C
+            </div>
+
+            <div class="activity">
+              📉 Min:
+              ${min}°C
+            </div>
+
+            <div class="activity">
+              💧 Humidity:
+              ${midday.main.humidity}%
+            </div>
+
+            <div class="activity">
+              🌬 Wind Speed:
+              ${midday.wind.speed} m/s
+            </div>
+
+            <div class="activity">
+              🧭 Wind Direction:
+              ${getWindDirection(midday.wind.deg)}
+            </div>
+
+            <div class="activity">
+              ☁️ Cloudiness:
+              ${midday.clouds.all}%
+            </div>
+
+            <div class="activity">
+              🔵 Pressure:
+              ${midday.main.pressure} hPa
+            </div>
+
+            <div class="activity">
+              👀 Visibility:
+              ${(midday.visibility / 1000).toFixed(1)} km
+            </div>
+
+            <div class="activity">
+              🌧 Rain Chance:
+              ${Math.round((midday.pop || 0) * 100)}%
+            </div>
+
+            <div class="activity">
+              ☀️ UV Advice:
+              ${
+                temp > 28
+                  ? "High UV — sunscreen recommended"
+                  : "Moderate conditions"
+              }
+            </div>
+
+          </div>
+
+          <button
+            class="btn secondary-btn"
+            onclick="toggleHourly('hourly-${index}')">
+
+            ⏰ Hourly Breakdown
+
+          </button>
+
+          <div
+            class="hourly-container hidden"
+            id="hourly-${index}">
+
+            ${entries.map(hour => `
+
+              <div class="hour-card">
+
+                <p class="hour-time">
+                  ${hour.dt_txt
+                    .split(" ")[1]
+                    .slice(0,5)}
+                </p>
+
+                <img
+                  src="https://openweathermap.org/img/wn/${hour.weather[0].icon}.png"
+                >
+
+                <p class="hour-temp">
+                  ${Math.round(hour.main.temp)}°C
+                </p>
+
+                <small>
+                  Feels:
+                  ${Math.round(hour.main.feels_like)}°C
+                </small>
+
+                <small>
+                  💧 ${hour.main.humidity}%
+                </small>
+
+                <small>
+                  🌧 ${Math.round((hour.pop || 0) * 100)}%
+                </small>
+
+              </div>
+
+            `).join("")}
+
+          </div>
+
+        </div>
+      `;
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    showToast(
+      "Weather unavailable ❌",
+      "error"
+    );
+
+    weatherBox.innerHTML = `
+      <div class="activity">
+        ❌ Forecast unavailable
+      </div>
+    `;
   }
 }
 
@@ -921,6 +1215,20 @@ function toggleDay(id){
 }
 
 /* =========================
+   HOURLY TOGGLE
+========================= */
+
+function toggleHourly(id) {
+
+  const el =
+    document.getElementById(id);
+
+  if (!el) return;
+
+  el.classList.toggle("hidden");
+}
+
+/* =========================
    GENERATE ITINERARY
 ========================= */
 
@@ -995,7 +1303,7 @@ function generateItinerary() {
     date.setDate(baseDate.getDate() + i - 1);
 
     // 🌤 WEATHER + TIP
-    const weather = weatherTypes[i % weatherTypes.length];
+    const weather = "Live Forecast";
     const tip = getWeatherTip(weather);
 
     const dayCost = baseCost; // 💰 DAILY PRICE
