@@ -200,7 +200,7 @@ function renderBudgetChart(total) {
 function getAISuggestion(style, weather){
 
   if(weather.includes("Rain")){
-    return "Visit museums and indoor cafés today ☔";
+    return "Visit indoor rides and covered attractions today ☔";
   }
 
   if(style === "Adventure"){
@@ -209,6 +209,14 @@ function getAISuggestion(style, weather){
 
   if(style === "Romantic"){
     return "Book a sunset dinner tonight 🌅";
+  }
+
+  if(style === "Theme Park"){
+    return "Arrive early for shorter ride queues 🎢";
+  }
+
+  if(style === "Food & Nightlife"){
+    return "Try local street food and rooftop dining tonight 🍜";
   }
 
   return "Explore local attractions nearby ✨";
@@ -220,6 +228,7 @@ function getAISuggestion(style, weather){
 // =========================
 
 const activities = {
+
   Adventure: [
     "Mountain Hiking Trail",
     "Sunrise Summit Climb",
@@ -321,7 +330,31 @@ const activities = {
     "Cocktail Mixology Class",
     "Seafood Night Feast Tour",
     "Late Night Diner Run"
+  ],
+
+  "Theme Park": [
+    "Disneyland Adventure Day",
+    "Universal Studios Experience",
+    "Roller Coaster Marathon",
+    "Water Park Splash Day",
+    "Fantasy Castle Tour",
+    "Theme Park Night Parade",
+    "4D Cinema Experience",
+    "Character Meet & Greet",
+    "Extreme Thrill Ride Session",
+    "Family Fun Carnival",
+    "Theme Park Food Festival",
+    "Virtual Reality Ride Experience",
+    "Fireworks Spectacular Show",
+    "Haunted House Adventure",
+    "Aquatic Theme Park Visit",
+    "Safari Theme Park Journey",
+    "Arcade & Gaming Zone",
+    "Magic Kingdom Exploration",
+    "Adventure Island Ride Tour",
+    "Theme Park VIP Experience"
   ]
+
 };
 
 const hotels = {
@@ -428,7 +461,7 @@ function getWeatherTip(weather) {
   return "Check conditions before heading out";
 }
 
-function getPackingList(weather) {
+function getPackingList(weather, style) {
 
   let items = [];
 
@@ -474,6 +507,19 @@ function getPackingList(weather) {
     items.push("🧴 Sunscreen (high SPF)");
     items.push("💧 Electrolyte tablets");
   }
+
+  // =========================
+// THEME PARK ITEMS
+// =========================
+
+if(style === "Theme Park"){
+  items.push("🎟 Theme park tickets");
+  items.push("🔋 Portable phone charger");
+  items.push("👟 Comfortable walking shoes");
+  items.push("🧢 Sun hat");
+  items.push("💦 Water bottle");
+  items.push("🎢 Fast-pass / ride pass");
+}
 
   // =========================
   // ALWAYS INCLUDED ESSENTIALS
@@ -1203,7 +1249,7 @@ async function regenerateFavoriteTrip(destination, days) {
       weather,
       tip,
       cost: baseCost,
-      packing: getPackingList(weather),
+      packing: getPackingList(weather, style),
       hotel: pick(hotels[budget]),
       schedule: {
         morning: pick(activities[style]),
@@ -1216,7 +1262,7 @@ async function regenerateFavoriteTrip(destination, days) {
     currentPlan.push(day);
 
     itinerary.innerHTML += `
-      <div class="day-card">
+      <div class="day-card ${style === 'Theme Park' ? 'theme-park-card' : ''}">
 
         <div class="day-header"
           onclick="toggleDay('f${i}')">
@@ -1370,7 +1416,7 @@ function generateItinerary() {
       weather: weather,
       tip: tip,
       cost: dayCost,
-      packing: getPackingList(weather), 
+      packing: getPackingList(weather, style), 
       hotel: pick(hotels[budget]),
       schedule: {
         morning: pick(activities[style]),
@@ -1384,7 +1430,7 @@ function generateItinerary() {
 
     itinerary.innerHTML += `
 
-      <div class="day-card">
+      <div class="day-card ${style === 'Theme Park' ? 'theme-park-card' : ''}">
 
         <div class="day-header"
           onclick="toggleDay('d${i}')">
@@ -1417,10 +1463,24 @@ function generateItinerary() {
 
           <div class="activity">Day Cost: £${day.cost}</div>
 
-           <div class="activity">🌅 ${day.schedule.morning}</div>
-           <div class="activity">🍽️ ${day.schedule.midday}</div>
-           <div class="activity">☀️ ${day.schedule.afternoon}</div>
-           <div class="activity">🌙 ${day.schedule.evening}</div>
+           <div class="activity">
+  ${style === "Theme Park" ? "🎢" : "🌅"}
+  ${day.schedule.morning}
+</div>
+
+<div class="activity">
+  🍽️ ${day.schedule.midday}
+</div>
+
+<div class="activity">
+  ${style === "Theme Park" ? "🎠" : "☀️"}
+  ${day.schedule.afternoon}
+</div>
+
+<div class="activity">
+  ${style === "Theme Park" ? "🎆" : "🌙"}
+  ${day.schedule.evening}
+</div>
 
           <div class="activity">🏨 ${day.hotel}</div>
       </div>
@@ -1656,7 +1716,7 @@ async function regenerateTripFromSaved(destination, days) {
       weather,
       tip,
       cost: baseCost,
-      packing: getPackingList(weather),
+      packing: getPackingList(weather, style),
       hotel: pick(hotels[budget]),
       schedule: {
         morning: pick(activities[style]),
@@ -1761,7 +1821,7 @@ function renderSavedPlan() {
 
   currentPlan.forEach((day, i) => {
     itinerary.innerHTML += `
-      <div class="day-card">
+     <div class="day-card">
         <div class="day-header" onclick="toggleDay('saved${i}')">
           <div>
             <h3>Day ${day.day}</h3>
