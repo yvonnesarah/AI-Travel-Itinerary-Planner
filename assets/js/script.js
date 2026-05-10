@@ -147,25 +147,52 @@ function startCountdown(startDate){
   },1000);
 }
 
-function renderBudgetChart(total){
+function renderBudgetChart(total) {
 
   const ctx = document.getElementById("budgetChart");
   if (!ctx) return;
 
   if (budgetChart) budgetChart.destroy();
 
+  const data = {
+    labels: ["Hotels", "Food", "Activities", "Transport"],
+    datasets: [{
+      label: "Trip Budget Breakdown",
+      data: [
+        total * 0.4,
+        total * 0.2,
+        total * 0.25,
+        total * 0.15
+      ],
+      borderWidth: 1
+    }]
+  };
+
   budgetChart = new Chart(ctx, {
     type: "doughnut",
-    data: {
-      labels: ["Hotels", "Food", "Activities", "Transport"],
-      datasets: [{
-        data: [
-          total * 0.4,
-          total * 0.2,
-          total * 0.25,
-          total * 0.15
-        ]
-      }]
+    data,
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      plugins: {
+        legend: {
+          position: "bottom"
+        },
+
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              const value = context.raw;
+              const percent = ((value / total) * 100).toFixed(1);
+              return `${context.label}: ${formatCurrency(value)} (${percent}%)`;
+            }
+          }
+        }
+      },
+
+      cutout: "65%"
     }
   });
 }
