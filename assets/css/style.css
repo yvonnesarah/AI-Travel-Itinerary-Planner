@@ -602,3 +602,17 @@ body.dark .bot-msg {
 .hidden {
   display: none;
 }
+
+.theme-park-card {
+  border: 2px solid #f59e0b;
+  background: linear-gradient(
+    135deg,
+    #fff7ed,
+    #fffbeb
+  );
+}
+
+body.dark .theme-park-card {
+  background: #1e1b04;
+  border-color: #fbbf24;
+}
