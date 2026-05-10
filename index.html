@@ -59,7 +59,14 @@
         </select>
       </div>
 
-      <input type="number" id="travelers" value="2" min="1" placeholder="Travelers">
+      <input type="number" id="travelers" value="2" min="1">
+
+      <!-- FIXED: currency added -->
+      <select id="currency">
+        <option value="GBP">GBP (£)</option>
+        <option value="USD">USD ($)</option>
+        <option value="EUR">EUR (€)</option>
+      </select>
 
       <button class="btn primary-btn" onclick="generateItinerary()">
         ✨ Generate Itinerary
@@ -67,12 +74,21 @@
     </div>
 
     <div class="result-section">
+
       <div id="weatherBox"></div>
       <div id="tripSummary"></div>
       <div id="countdown"></div>
       <div id="map"></div>
       <canvas id="budgetChart"></canvas>
+
       <div id="itinerary"></div>
+
+      <h2 class="section-title">💾 Saved Trips</h2>
+      <div id="savedTripsHistory"></div>
+
+      <h2 class="section-title">❤️ Favourite Trips</h2>
+      <div id="favoriteTripsList"></div>
+
     </div>
 
   </div>
