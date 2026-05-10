@@ -30,6 +30,7 @@
       <button class="btn secondary-btn" onclick="exportJSON()">📄 Export</button>
       <button class="btn primary-btn" onclick="saveTrip()">💾 Save Trip</button>
       <button class="btn primary-btn" onclick="saveFavoriteTrip()">❤️ Favourite Trip</button>
+      <button class="btn secondary-btn" onclick="openCompareMode()">❤️ Compare Trips</button>
     </div>
   </div>
 
@@ -89,6 +90,30 @@
 
       <h2 class="section-title">❤️ Favourite Trips</h2>
       <div id="favoriteTripsList"></div>
+
+      <!-- =========================
+     TRIP COMPARISON MODE
+========================= -->
+
+<h2 class="section-title">❤️ Trip Comparison Mode</h2>
+
+<div class="comparison-controls">
+
+  <select id="compareTrip1">
+    <option value="">Select Trip 1</option>
+  </select>
+
+  <select id="compareTrip2">
+    <option value="">Select Trip 2</option>
+  </select>
+
+  <button class="btn primary-btn" onclick="compareTrips()">
+    ⚡ Compare
+  </button>
+
+</div>
+
+<div id="comparisonResults"></div>
 
     </div>
 
