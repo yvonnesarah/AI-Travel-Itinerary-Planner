@@ -103,18 +103,18 @@ No installation is required to use the app. It is hosted online and can be acces
 ## 📚 Usage
 1. Open the application in your browser
 2. Enter travel details:
-   *  Destination
-   * Budget
-   * Travel style
-   * Duration
+* Destination
+* Budget
+* Travel style
+* Duration
 3. Click Generate Itinerary
 4. Interact with features:
-   * 🌦 View weather forecast
-   * 💰 Check budget breakdown
-   * 🗺 View map
-   * ❤️ Save or favourite trips
-   * ⚖ Compare trips
-   * 🤖 Use AI chat assistant
+* 🌦 View weather forecast
+* 💰 Check budget breakdown
+* 🗺 View map
+* ❤️ Save or favourite trips
+* ⚖ Compare trips
+* 🤖 Use AI chat assistant
 
 ## 🔗 Live Demo & Repository
 Application can be viewed here: 
